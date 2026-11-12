@@ -655,7 +655,7 @@ Order is chosen so that each work package leaves the tree in a state where the n
 5. Decide M10 (FI-23) per Q6.
 6. Rewrite the four tautological policies (FI-16) as a new forward-only migration that drops and recreates them with qualified outer columns — do **not** edit `0022`/`0029`.
 7. Battery additions: no-arg `effective_permission_keys()` returns rows; a plain member cannot insert `file_metadata`; duplicate `roles.key` is rejected; unknown `circular_targets.role_key` is rejected; a mismatched department in `circular_responses` is rejected; deactivating an assignment clears `assigned_operator_id` (if Q3 = A).
-8. **Verification (local, empty DB):** `supabase db reset` → `npm run test:rls` → `npm run test:e2e`. If Kong 502s on `/auth/v1/*` after reset, restart `supabase_kong_school-administration-portal` and wait ~8 s.
+8. **Verification (local, empty DB):** `supabase db reset` → `npm run test:rls` → `npm run test:e2e`. If Kong 502s on `/auth/v1/*` after reset, restart `supabase_kong_nasharatmobile` and wait ~8 s.
 9. **Acceptance:** reset applies `0001`→`0048`; `\df public.effective_permission_keys` shows one signature; `select public.effective_permission_keys()` succeeds; battery green.
 
 ### WP-3 — Upload integrity (High, closes H-18) · ~1 day
@@ -769,19 +769,19 @@ npx prettier --check .
 npm run scan:secrets
 
 # 0048 ambiguity, local only, rolled back
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres \
   -c "select proname, pg_get_function_identity_arguments(oid) from pg_proc where proname='effective_permission_keys';"
 
 # roles.key uniqueness (absent)
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres \
   -c "select conname, pg_get_constraintdef(oid) from pg_constraint where conrelid='public.roles'::regclass;"
 
 # tautological policy predicates
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres \
   -c "select tablename, policyname, cmd from pg_policies where schemaname='public' and (qual like '%ura.school_id = ura.school_id%' or with_check like '%ura.school_id = ura.school_id%');"
 
 # unconstrained text columns
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres \
   -c "select table_name, column_name, udt_name from information_schema.columns where table_schema='public' and column_name in ('category','visibility') and udt_name='text';"
 ```
 

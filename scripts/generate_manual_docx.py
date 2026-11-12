@@ -139,7 +139,7 @@ def main():
     set_paragraph_bidi(tp2, rtl=False)
     tp2.alignment = WD_ALIGN_PARAGRAPH.CENTER
     tp2.paragraph_format.space_after = Pt(4)
-    add_run(tp2, "School Administration Portal — Official User Manuals Index", font_name="Calibri", font_size=13, bold=True, color_rgb=(224, 231, 255), rtl=False)
+    add_run(tp2, "Nasharat Mobile — Official User Manuals Index", font_name="Calibri", font_size=13, bold=True, color_rgb=(224, 231, 255), rtl=False)
     
     tp3 = title_cell.add_paragraph()
     set_paragraph_bidi(tp3, rtl=True)
@@ -342,7 +342,7 @@ def main():
     p_intro_en.paragraph_format.space_before = Pt(4)
     p_intro_en.paragraph_format.space_after = Pt(8)
     add_run(p_intro_en, 
-        "Welcome to the official user manual repository for the School Administration Portal. "
+        "Welcome to the official user manual repository for the Nasharat Mobile. "
         "The portal is an enterprise-grade, Arabic-first school operations and governance system built with Next.js 16, "
         "PostgreSQL Row Level Security (RLS), and Supabase. The portal strictly enforces zero-trust separation of duties "
         "and Role-Based Access Control (RBAC), ensuring each user persona operates within an isolated, streamlined workflow.",

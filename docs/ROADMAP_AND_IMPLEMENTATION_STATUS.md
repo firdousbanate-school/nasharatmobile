@@ -1,4 +1,4 @@
-# School Administration Portal: Roadmap & Implementation Status
+# Nasharat Mobile: Roadmap & Implementation Status
 
 > **Document Status:** Active & Maintained  
 > **Last Updated:** October 2026  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-The School Administration Portal is an enterprise-grade, multi-tenant capable, Arabic-first (RTL) school operations system. The platform enforces strict separation of duties, zero-trust data access via PostgreSQL Row Level Security (RLS), architectural modularity (Rule #1: one function per file, ~300 line bound), and centralized error handling with real-time structured logging.
+The Nasharat Mobile is an enterprise-grade, multi-tenant capable, Arabic-first (RTL) school operations system. The platform enforces strict separation of duties, zero-trust data access via PostgreSQL Row Level Security (RLS), architectural modularity (Rule #1: one function per file, ~300 line bound), and centralized error handling with real-time structured logging.
 
 ---
 

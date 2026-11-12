@@ -1,4 +1,4 @@
-# School Administration Portal — Code Inspection Report
+# Nasharat Mobile — Code Inspection Report
 
 **Date:** 2026-10-22
 **Commit inspected:** `012aba7` ("WP2: unblock the RLS authorization gate")

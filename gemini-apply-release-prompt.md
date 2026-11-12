@@ -1,6 +1,6 @@
 # Task: Apply Release 2026-11 (phone UI + security hardening + write-action tests) and open ONE Pull Request
 
-You are working in my local clone of the School Administration Portal (Next.js 16, Supabase, next-intl, Vercel). I use Windows 11 and VS Code, so use PowerShell-compatible commands. Report after every step.
+You are working in my local clone of the Nasharat Mobile (Next.js 16, Supabase, next-intl, Vercel). I use Windows 11 and VS Code, so use PowerShell-compatible commands. Report after every step.
 
 ## Input
 

@@ -7,7 +7,7 @@
 
 ## 1. Introduction
 
-As a **Teacher or Academic Staff Member**, the School Administration Portal provides you with an easy, centralized digital workspace to stay informed of school-wide directives, inspect academic timelines, and report classroom maintenance needs.
+As a **Teacher or Academic Staff Member**, the Nasharat Mobile provides you with an easy, centralized digital workspace to stay informed of school-wide directives, inspect academic timelines, and report classroom maintenance needs.
 
 ---
 

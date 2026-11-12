@@ -1,4 +1,4 @@
-# School Administration Portal — Actionable Build Plan
+# Nasharat Mobile — Actionable Build Plan
 
 **Companion to:** `school_administration_implementation_plan.md` (requirements & architecture — the source of truth for _what_ to build).
 **Purpose of this document:** the ordered, executable plan for _how_ to build it in this repository — locked assumptions, repo layout, data model, permission matrix, work packages with test gates, timeline, CI/CD, and Sprint 0.

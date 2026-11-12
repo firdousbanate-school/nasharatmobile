@@ -7,7 +7,7 @@
 
 ## 1. Introduction & Overview
 
-As the **Platform Owner**, you possess the highest level of administrative authority in the School Administration Portal. Your account is isolated from individual school administrators to prevent privilege escalation or accidental modification.
+As the **Platform Owner**, you possess the highest level of administrative authority in the Nasharat Mobile. Your account is isolated from individual school administrators to prevent privilege escalation or accidental modification.
 
 You are responsible for:
 
