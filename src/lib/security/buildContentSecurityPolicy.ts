@@ -53,6 +53,7 @@ export function buildContentSecurityPolicy(
     "'self'",
     `'nonce-${nonce}'`,
     "'strict-dynamic'",
+    "'sha256-L7SQsgfZu9ByG5TYbUD49YB6pVJsb0eYrUBcuaszKWs='",
     isDev ? "'unsafe-eval'" : "",
   ]
     .filter(Boolean)
