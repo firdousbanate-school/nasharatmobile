@@ -2,14 +2,14 @@
 
 This bundle contains everything you need and nothing else.
 
-| File | What it is |
-|---|---|
-| `release-2026-11.patch` | The whole release as one git patch (phone UI, security hardening, tests). Made against your `School-Administration-Portal-LAST.zip` files. |
-| `gemini-apply-release-prompt.md` | Paste this into Gemini (Antigravity). It applies the patch on a branch, runs every check, and opens ONE Pull Request. |
-| `RUN_LOCALLY_WINDOWS.md` | How to run and test everything on localhost on Windows 11 (PowerShell). |
-| `reference/` | Screenshots of the phone UI for comparison (4 images). Optional. |
-| `optional-full-project/` | The complete updated project as a zip. Only for Path B below. |
-| `SHA256SUMS.txt` | Checksums, to confirm nothing was corrupted in download. |
+| File                             | What it is                                                                                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `release-2026-11.patch`          | The whole release as one git patch (phone UI, security hardening, tests). Made against your `School-Administration-Portal-LAST.zip` files. |
+| `gemini-apply-release-prompt.md` | Paste this into Gemini (Antigravity). It applies the patch on a branch, runs every check, and opens ONE Pull Request.                      |
+| `RUN_LOCALLY_WINDOWS.md`         | How to run and test everything on localhost on Windows 11 (PowerShell).                                                                    |
+| `reference/`                     | Screenshots of the phone UI for comparison (4 images). Optional.                                                                           |
+| `optional-full-project/`         | The complete updated project as a zip. Only for Path B below.                                                                              |
+| `SHA256SUMS.txt`                 | Checksums, to confirm nothing was corrupted in download.                                                                                   |
 
 ## Path A (recommended): patch + Gemini
 
