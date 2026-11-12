@@ -13,3 +13,6 @@ public
 supabase/migrations
 next-env.d.ts
 .zwork
+# Standalone static design artifacts, not application source. Formatting them
+# rewrites thousands of lines of inline layout and buys nothing.
+docs/prototypes

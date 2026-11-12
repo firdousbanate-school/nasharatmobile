@@ -2,12 +2,12 @@
 
 ## 0. Install once
 
-| Tool | Why | Install |
-|---|---|---|
-| Node.js 24+ and npm 10+ | the app requires it (README) | nodejs.org, then `node -v` |
-| Git | patches, branches | git-scm.com |
-| Docker Desktop (WSL2 backend) | runs the LOCAL Supabase stack | docker.com, start it and wait until it says "running" |
-| Supabase CLI | `supabase start`, and `npm run test:rls` calls it | `scoop bucket add supabase https://github.com/supabase/scoop-bucket.git` then `scoop install supabase` |
+| Tool                          | Why                                               | Install                                                                                                |
+| ----------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Node.js 24+ and npm 10+       | the app requires it (README)                      | nodejs.org, then `node -v`                                                                             |
+| Git                           | patches, branches                                 | git-scm.com                                                                                            |
+| Docker Desktop (WSL2 backend) | runs the LOCAL Supabase stack                     | docker.com, start it and wait until it says "running"                                                  |
+| Supabase CLI                  | `supabase start`, and `npm run test:rls` calls it | `scoop bucket add supabase https://github.com/supabase/scoop-bucket.git` then `scoop install supabase` |
 
 Do not add the Supabase CLI to `package.json`; install it with Scoop so the project's dependencies stay unchanged.
 
@@ -62,12 +62,12 @@ does not appear, and never commit it.
 
 Every demo account uses the password `LocalDev123!` (local only):
 
-| Email | Role | Good for testing |
-|---|---|---|
-| `owner@local.test` | platform owner | everything, language/theme switchers, Backup, Achievements |
-| `admin@local.test` | school admin | settings, reports, documents |
-| `head@local.test` | department head (Science) | circular responses |
-| `staff@local.test` | staff (Arabic) | the most restricted phone view (no Reports/Settings in More) |
+| Email              | Role                      | Good for testing                                             |
+| ------------------ | ------------------------- | ------------------------------------------------------------ |
+| `owner@local.test` | platform owner            | everything, language/theme switchers, Backup, Achievements   |
+| `admin@local.test` | school admin              | settings, reports, documents                                 |
+| `head@local.test`  | department head (Science) | circular responses                                           |
+| `staff@local.test` | staff (Arabic)            | the most restricted phone view (no Reports/Settings in More) |
 
 Without the seed you would create the first owner yourself through the "claim owner" flow, which needs
 `PLATFORM_BOOTSTRAP_SECRET` and/or `PLATFORM_OWNER_EMAIL` in your env (see `.env.example`).
