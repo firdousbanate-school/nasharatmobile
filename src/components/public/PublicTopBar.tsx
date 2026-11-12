@@ -10,7 +10,7 @@ import { PublicTopBarTicker } from "./PublicTopBarTicker";
 import type { CalendarEventRow } from "@/lib/calendar/types";
 import type { PublicSchoolProfileRow } from "@/lib/school/getPublicSchoolProfile";
 
-/** Navy top bar with Kuwait MOE branding, school title, Instagram link, and ticker. */
+/** Navy top bar with Kuwait MOE branding, school logo/name underneath, Instagram link, and ticker. */
 export function PublicTopBar({
   school,
   events,
@@ -22,12 +22,11 @@ export function PublicTopBar({
 }) {
   return (
     <header className="sticky top-0 z-50 border-b-4 border-gold bg-[linear-gradient(90deg,var(--topbar-from,var(--sidebar)),var(--topbar-to,var(--sidebar)))] text-sidebar-foreground shadow-md">
-      <div className="mx-auto grid w-full max-w-[1720px] grid-cols-1 items-center gap-4 px-4 py-3 sm:px-8 md:grid-cols-3 lg:px-12 xl:px-16">
-        <div className="flex items-center justify-center md:justify-start">
+      <div className="mx-auto flex w-full max-w-[1720px] flex-col items-center justify-between gap-4 px-4 py-3 sm:px-8 md:flex-row lg:px-12 xl:px-16">
+        <div className="flex min-w-0 flex-col items-center gap-2.5 md:items-start">
           <KuwaitMoeLink />
+          <PublicTopBarBrand school={school} />
         </div>
-
-        <PublicTopBarBrand school={school} />
 
         <div className="flex shrink-0 items-center justify-center gap-2.5 md:justify-end">
           <PublicInstagramLink url={school?.instagram_url} />
