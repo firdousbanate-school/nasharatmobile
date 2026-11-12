@@ -105,7 +105,10 @@
     "saveNewPassword": "Save New Password",
     "passwordResetSuccess": "Your password has been reset successfully. You can now sign in.",
     "passwordsDoNotMatch": "Passwords do not match.",
-    "passwordTooShort": "Password must be at least 6 characters long."
+    "passwordTooShort": "Password must be at least 6 characters long.",
+    "resetError": "Could not reset password. Please check your input or try again.",
+    "resetLinkInvalid": "This password reset link is invalid or has expired. Please request a new one.",
+    "requestNewResetLink": "Request new reset link"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -37,7 +37,7 @@ export function ResetPasswordForm() {
       : state.error === "mismatch"
         ? t("passwordsDoNotMatch")
         : state.error
-          ? t("error")
+          ? t("resetError")
           : null;
 
   return (

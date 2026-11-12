@@ -36,6 +36,12 @@ export async function requestPasswordResetAction(
 
     if (error) {
       sanitizeError(error, { action: "requestPasswordResetAction", email });
+      const isRate =
+        ("status" in error && (error as { status?: number }).status === 429) ||
+        error.message?.toLowerCase().includes("60 second");
+      if (isRate) {
+        return { success: false, error: "rate_limited" };
+      }
       return { success: false, error: "failed" };
     }
 

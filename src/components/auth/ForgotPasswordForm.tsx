@@ -50,7 +50,7 @@ export function ForgotPasswordForm() {
 
       {state.error && (
         <p className="text-sm text-destructive">
-          {state.error === "rate_limited" ? tErrors("rateLimitedDesc") : t("error")}
+          {state.error === "rate_limited" ? tErrors("rateLimitedDesc") : t("resetError")}
         </p>
       )}
 
