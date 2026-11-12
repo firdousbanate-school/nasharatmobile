@@ -5,9 +5,9 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { resolveDocumentErrorMessage } from "@/lib/documents/resolveDocumentErrorMessage";
 import type { SchoolDocumentRow, SchoolDocumentSlug } from "@/lib/documents/types";
-import { submitDocumentFormData } from "./submitDocumentFormData";
+import { submitDocumentDirect } from "./submitDocumentDirect";
 
-const MAX_DOCUMENT_BYTES = 20 * 1024 * 1024;
+const MAX_DOCUMENT_BYTES = 25 * 1024 * 1024;
 
 export function useDocumentFormSubmit({
   slug,
@@ -49,7 +49,7 @@ export function useDocumentFormSubmit({
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const result = await submitDocumentFormData({
+    const result = await submitDocumentDirect({
       slug,
       existingDoc,
       title,

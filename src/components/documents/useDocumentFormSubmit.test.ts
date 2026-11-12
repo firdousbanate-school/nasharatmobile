@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
-const { mockCreateAction, mockUpdateAction, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
-  mockCreateAction: vi.fn(),
-  mockUpdateAction: vi.fn(),
+const { mockSubmitDirect, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
+  mockSubmitDirect: vi.fn(),
   mockToastSuccess: vi.fn(),
   mockToastError: vi.fn(),
 }));
@@ -19,12 +18,8 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("@/actions/documents/createSchoolDocumentAction", () => ({
-  createSchoolDocumentAction: mockCreateAction,
-}));
-
-vi.mock("@/actions/documents/updateSchoolDocumentAction", () => ({
-  updateSchoolDocumentAction: mockUpdateAction,
+vi.mock("./submitDocumentDirect", () => ({
+  submitDocumentDirect: (...args: unknown[]) => mockSubmitDirect(...args),
 }));
 
 import { useDocumentFormSubmit } from "./useDocumentFormSubmit";
@@ -34,7 +29,7 @@ describe("useDocumentFormSubmit", () => {
     vi.clearAllMocks();
   });
 
-  it("rejects files over 20 MB on the client before submitting", async () => {
+  it("rejects files over 25 MB on the client before submitting", async () => {
     const onSuccess = vi.fn();
     const onClose = vi.fn();
     const { result } = renderHook(() =>
@@ -46,7 +41,7 @@ describe("useDocumentFormSubmit", () => {
     );
 
     const oversizedFile = new File(["x"], "large.pdf", { type: "application/pdf" });
-    Object.defineProperty(oversizedFile, "size", { value: 21 * 1024 * 1024 });
+    Object.defineProperty(oversizedFile, "size", { value: 26 * 1024 * 1024 });
 
     act(() => {
       result.current.setTitle("Operational Plan");
@@ -59,14 +54,17 @@ describe("useDocumentFormSubmit", () => {
       } as unknown as React.FormEvent);
     });
 
-    expect(mockCreateAction).not.toHaveBeenCalled();
+    expect(mockSubmitDirect).not.toHaveBeenCalled();
     expect(result.current.errorMessage).toBe("fileTooLarge");
     expect(result.current.isSubmitting).toBe(false);
     expect(mockToastError).toHaveBeenCalledWith("fileTooLarge");
   });
 
-  it("catches transport errors and resets isSubmitting instead of throwing unhandled rejection", async () => {
-    mockCreateAction.mockRejectedValueOnce(new Error("Unexpected end of form"));
+  it("calls submitDocumentDirect and resets isSubmitting on error result", async () => {
+    mockSubmitDirect.mockResolvedValueOnce({
+      success: false,
+      error: "Upload failed directly",
+    });
 
     const onSuccess = vi.fn();
     const onClose = vi.fn();
@@ -92,7 +90,7 @@ describe("useDocumentFormSubmit", () => {
     });
 
     expect(result.current.isSubmitting).toBe(false);
-    expect(result.current.errorMessage).toBe("Unexpected end of form");
-    expect(mockToastError).toHaveBeenCalledWith("Unexpected end of form");
+    expect(result.current.errorMessage).toBe("Upload failed directly");
+    expect(mockToastError).toHaveBeenCalledWith("Upload failed directly");
   });
 });

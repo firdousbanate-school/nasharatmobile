@@ -879,7 +879,7 @@
     "documentDescription": "Description (Optional)",
     "documentDescriptionPlaceholder": "Brief summary of the document's content and objectives...",
     "selectFile": "Select File",
-    "fileHelp": "Supported formats: PDF, PNG, JPG, WebP (Max 20MB)",
+    "fileHelp": "Supported formats: PDF, PNG, JPG, WebP (Max 25MB)",
     "replaceFileHelp": "Leave empty to keep current file, or choose a new file to replace it.",
     "save": "Save",
     "saving": "Saving...",

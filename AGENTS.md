@@ -58,19 +58,9 @@ Arabic application content and translations must, of course, remain Arabic when 
 
 <!-- BEGIN:nextjs-agent-rules -->
 
-## RULE #3: NEXT.JS — NEVER ASSUME FRAMEWORK KNOWLEDGE
+## This is NOT the Next.js you know
 
-**This is NOT necessarily the Next.js version you know.**
-
-This version may contain breaking changes. APIs, conventions, and file structures may differ from your training data.
-
-Before writing or modifying any Next.js code:
-
-1. Identify the actual installed Next.js version.
-2. Read the relevant documentation in `node_modules/next/dist/docs/`, resolved from this file's directory. In monorepos, the `next` package may not be visible from the repository root.
-3. Verify the actual API, supported conventions, and migration requirements against the installed version.
-4. Heed deprecation notices.
-5. Never rely solely on remembered Next.js APIs or examples from older versions.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 

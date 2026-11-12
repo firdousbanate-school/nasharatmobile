@@ -33,7 +33,8 @@ export async function submitDocumentFormData({
   } catch (err) {
     return {
       success: false,
-      error: err instanceof Error ? err.message : undefined,
+      code: "TRANSPORT_ERROR",
+      error: err instanceof Error ? err.message : "Transport error during submission",
     };
   }
 }
