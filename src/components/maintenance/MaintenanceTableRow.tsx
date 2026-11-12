@@ -1,12 +1,10 @@
 "use client";
 
-import { Link } from "@/i18n";
 import { useLocale, useTranslations } from "next-intl";
-import { EyeIcon } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { MaintenancePriorityBadge } from "./MaintenancePriorityBadge";
 import { MaintenanceStatusBadge } from "./MaintenanceStatusBadge";
+import { MaintenanceRowActions } from "./MaintenanceRowActions";
 import { formatLocation } from "@/lib/maintenance/formatLocation";
 import type { MaintenanceRequestRow } from "@/lib/maintenance/types";
 
@@ -41,11 +39,7 @@ export function MaintenanceTableRow({ ticket }: { ticket: MaintenanceRequestRow 
         {new Date(ticket.created_at).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US")}
       </TableCell>
       <TableCell className="text-end">
-        <Link href={`/maintenance/${ticket.id}`} className="inline-flex items-center gap-1">
-          <Button variant="ghost" size="sm">
-            <EyeIcon className="size-4" />
-          </Button>
-        </Link>
+        <MaintenanceRowActions ticket={ticket} />
       </TableCell>
     </TableRow>
   );

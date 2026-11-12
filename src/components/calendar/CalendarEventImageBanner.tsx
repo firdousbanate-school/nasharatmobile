@@ -12,14 +12,14 @@ export function CalendarEventImageBanner({
   if (!imagePath) return null;
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
+    <div className="relative flex w-full items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/20 p-1.5">
       <Image
         src={imagePath}
         alt={altText}
-        width={800}
-        height={300}
+        width={1200}
+        height={800}
         unoptimized
-        className="max-h-48 w-full object-cover"
+        className="h-auto max-h-[70vh] w-auto max-w-full rounded-lg object-contain shadow-xs"
       />
     </div>
   );

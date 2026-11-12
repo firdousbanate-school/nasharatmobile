@@ -25,7 +25,8 @@ export async function getSchoolAchievements(
       created_at,
       updated_at,
       department:departments(id, name_ar, name_en),
-      creator:profiles!created_by(id, full_name)
+      creator:profiles!created_by(id, full_name),
+      attachments:achievement_attachments(id, path, mime, size_bytes, created_at)
     `,
     )
     .eq("school_id", schoolId)

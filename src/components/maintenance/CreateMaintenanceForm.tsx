@@ -1,11 +1,10 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { UploadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +12,8 @@ import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
 import { PANEL } from "@/components/ui/diamond-card-styles";
 import { MaintenanceCoreFields } from "./MaintenanceCoreFields";
-import { createMaintenanceAction } from "@/actions/maintenance/createMaintenanceAction";
+import { MultiFileInput } from "@/components/ui/MultiFileInput";
+import { handleCreateMaintenanceSubmit } from "./handleCreateMaintenanceSubmit";
 import type { LocationRow } from "@/lib/school/getSchoolLocations";
 import { STICKY_ACTION_BAR_CLASS } from "@/components/mobile/stickyActionBarClass";
 
@@ -22,17 +22,18 @@ export function CreateMaintenanceForm({ locations }: { locations: LocationRow[] 
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
-      const res = await createMaintenanceAction(formData);
-      if (res.success && res.requestId) {
-        toast.success(tCommon("saved"));
-        router.push(`/${locale}/maintenance/${res.requestId}`);
-      } else {
+      const res = await handleCreateMaintenanceSubmit({ formData, selectedFiles });
+      if (!res.success || !res.requestId) {
         toast.error(res.error || tCommon("error"));
+        return;
       }
+      toast.success(tCommon("saved"));
+      router.push(`/${locale}/maintenance/${res.requestId}`);
     });
   };
 
@@ -64,13 +65,14 @@ export function CreateMaintenanceForm({ locations }: { locations: LocationRow[] 
 
         <MaintenanceCoreFields locations={locations} />
 
-        <div className="space-y-2 border-t border-border pt-4">
-          <Label htmlFor="photo" className="flex items-center gap-2">
-            <UploadIcon className="size-4 text-muted-foreground" />
-            <span>{t("photo")}</span>
-          </Label>
-          <Input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" />
-          <p className="text-xs text-muted-foreground">{t("photoHelp")}</p>
+        <div className="border-t border-border pt-4">
+          <MultiFileInput
+            id="maintenance-photos"
+            label={t("photo")}
+            files={selectedFiles}
+            onFilesChange={setSelectedFiles}
+            accept="image/jpeg,image/png,image/webp,application/pdf"
+          />
         </div>
       </div>
 

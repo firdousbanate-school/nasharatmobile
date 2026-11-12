@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { publishCalendarEventAction } from "@/actions/calendar/publishCalendarEventAction";
 import { cancelCalendarEventAction } from "@/actions/calendar/cancelCalendarEventAction";
 import { archiveCalendarEventAction } from "@/actions/calendar/archiveCalendarEventAction";
+import { CalendarDeleteButton } from "./CalendarDeleteButton";
 import type { CalendarStatus } from "@/lib/calendar/types";
 
 export function CalendarActionButtons({
@@ -38,7 +39,7 @@ export function CalendarActionButtons({
     <div className="flex flex-wrap items-center gap-2">
       {status !== "archived" && (
         <Link href={`/calendar/${eventId}/edit`}>
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs">
             <PencilIcon className="size-3.5" />
             <span>{t("edit")}</span>
           </Button>
@@ -50,7 +51,7 @@ export function CalendarActionButtons({
           size="sm"
           disabled={isPending}
           onClick={() => executeAction(publishCalendarEventAction)}
-          className="gap-1.5 bg-success text-success-foreground"
+          className="gap-1.5 bg-success text-xs text-success-foreground"
         >
           <SendIcon className="size-3.5 rtl:rotate-180" />
           <span>{t("publish")}</span>
@@ -64,7 +65,7 @@ export function CalendarActionButtons({
             size="sm"
             disabled={isPending}
             onClick={() => executeAction(cancelCalendarEventAction)}
-            className="gap-1.5 text-destructive"
+            className="gap-1.5 text-xs text-destructive"
           >
             <BanIcon className="size-3.5" />
             <span>{t("cancel")}</span>
@@ -74,13 +75,15 @@ export function CalendarActionButtons({
             size="sm"
             disabled={isPending}
             onClick={() => executeAction(archiveCalendarEventAction)}
-            className="gap-1.5 text-muted-foreground"
+            className="gap-1.5 text-xs text-muted-foreground"
           >
             <ArchiveIcon className="size-3.5" />
             <span>{t("archive")}</span>
           </Button>
         </>
       )}
+
+      <CalendarDeleteButton eventId={eventId} />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
-const { mockSubmitDirect, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
-  mockSubmitDirect: vi.fn(),
+const { mockExecuteSubmission, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
+  mockExecuteSubmission: vi.fn(),
   mockToastSuccess: vi.fn(),
   mockToastError: vi.fn(),
 }));
@@ -18,8 +18,8 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("./submitDocumentDirect", () => ({
-  submitDocumentDirect: (...args: unknown[]) => mockSubmitDirect(...args),
+vi.mock("./executeDocumentSubmission", () => ({
+  executeDocumentSubmission: (...args: unknown[]) => mockExecuteSubmission(...args),
 }));
 
 import { useDocumentFormSubmit } from "./useDocumentFormSubmit";
@@ -54,16 +54,17 @@ describe("useDocumentFormSubmit", () => {
       } as unknown as React.FormEvent);
     });
 
-    expect(mockSubmitDirect).not.toHaveBeenCalled();
-    expect(result.current.errorMessage).toBe("fileTooLarge");
+    expect(mockExecuteSubmission).not.toHaveBeenCalled();
+    expect(result.current.errorMessage).toBe("large.pdf: fileTooLarge");
     expect(result.current.isSubmitting).toBe(false);
-    expect(mockToastError).toHaveBeenCalledWith("fileTooLarge");
+    expect(mockToastError).toHaveBeenCalledWith("large.pdf: fileTooLarge");
   });
 
-  it("calls submitDocumentDirect and resets isSubmitting on error result", async () => {
-    mockSubmitDirect.mockResolvedValueOnce({
+  it("calls executeDocumentSubmission and resets isSubmitting on error result", async () => {
+    mockExecuteSubmission.mockResolvedValueOnce({
       success: false,
       error: "Upload failed directly",
+      isUpdate: false,
     });
 
     const onSuccess = vi.fn();

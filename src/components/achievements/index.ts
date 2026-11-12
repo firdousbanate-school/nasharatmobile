@@ -11,3 +11,4 @@ export { CreateAchievementDialog } from "./CreateAchievementDialog";
 export { AchievementFilterBar } from "./AchievementFilterBar";
 export { AchievementList } from "./AchievementList";
 export { SchoolAchievementsHub } from "./SchoolAchievementsHub";
+export { AchievementAttachmentsList } from "./AchievementAttachmentsList";

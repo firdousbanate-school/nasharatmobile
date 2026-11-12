@@ -1,15 +1,22 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { AlertCircleIcon } from "lucide-react";
-import { MaintenancePriorityBadge } from "./MaintenancePriorityBadge";
-import { MaintenanceStatusBadge } from "./MaintenanceStatusBadge";
 import { MaintenanceDetailMetaGrid } from "./MaintenanceDetailMetaGrid";
+import { EditMaintenanceDialog } from "./EditMaintenanceDialog";
+import { MaintenanceDeleteDialog } from "./MaintenanceDeleteDialog";
+import { MaintenanceDetailHeader } from "./MaintenanceDetailHeader";
 import { GoldDots } from "@/components/ui/gold-dots";
 import type { MaintenanceRequestRow } from "@/lib/maintenance/types";
 
 export function MaintenanceDetailCard({ ticket }: { ticket: MaintenanceRequestRow }) {
   const t = useTranslations("maintenance");
+  const locale = useLocale();
+  const router = useRouter();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
     <div className="relative space-y-6 overflow-hidden rounded-xl border border-border bg-card p-6 pt-8 shadow-[0_12px_30px_rgba(20,37,74,.10)]">
@@ -17,19 +24,12 @@ export function MaintenanceDetailCard({ ticket }: { ticket: MaintenanceRequestRo
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,var(--action-from,#0b63d6),var(--action-to,#0a2f7a))]"
       />
-      <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="mb-1 font-mono text-sm font-semibold text-primary">
-            {ticket.ticket_number}
-          </div>
-          <h2 className="font-heading text-xl font-extrabold text-primary">{ticket.title}</h2>
-          <div className="mt-2 h-0.5 w-24 rounded-full bg-[linear-gradient(90deg,var(--rule-from,#b88a2a),var(--action-to,#0a2f7a))]" />
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <MaintenancePriorityBadge priority={ticket.priority} />
-          <MaintenanceStatusBadge status={ticket.status} />
-        </div>
-      </div>
+
+      <MaintenanceDetailHeader
+        ticket={ticket}
+        onEdit={() => setIsEditOpen(true)}
+        onDelete={() => setIsDeleteOpen(true)}
+      />
 
       <div className="space-y-2">
         <h3 className="flex items-center gap-2 text-xs font-extrabold text-primary">
@@ -62,6 +62,26 @@ export function MaintenanceDetailCard({ ticket }: { ticket: MaintenanceRequestRo
       )}
 
       <MaintenanceDetailMetaGrid ticket={ticket} />
+
+      {isEditOpen && (
+        <EditMaintenanceDialog
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          ticket={ticket}
+          locations={[]}
+          onSuccess={() => router.refresh()}
+        />
+      )}
+
+      {isDeleteOpen && (
+        <MaintenanceDeleteDialog
+          isOpen={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
+          requestId={ticket.id}
+          ticketNumber={ticket.ticket_number}
+          onSuccess={() => router.push(`/${locale}/maintenance`)}
+        />
+      )}
     </div>
   );
 }

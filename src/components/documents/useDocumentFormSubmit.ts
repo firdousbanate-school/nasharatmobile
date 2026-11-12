@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { resolveDocumentErrorMessage } from "@/lib/documents/resolveDocumentErrorMessage";
 import type { SchoolDocumentRow, SchoolDocumentSlug } from "@/lib/documents/types";
-import { submitDocumentDirect } from "./submitDocumentDirect";
-
-const MAX_DOCUMENT_BYTES = 25 * 1024 * 1024;
+import { validateDocumentFormFiles } from "./validateDocumentFormFiles";
+import { executeDocumentSubmission } from "./executeDocumentSubmission";
 
 export function useDocumentFormSubmit({
   slug,
@@ -23,51 +22,50 @@ export function useDocumentFormSubmit({
   const t = useTranslations("documents");
   const [title, setTitle] = useState(existingDoc?.title || "");
   const [description, setDescription] = useState(existingDoc?.description || "");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) {
-      setErrorMessage(t("titleRequired"));
-      return;
-    }
-
-    if (!existingDoc && !file) {
-      setErrorMessage(t("fileRequired"));
-      return;
-    }
-
-    if (file && file.size > MAX_DOCUMENT_BYTES) {
-      const msg = t("fileTooLarge");
-      setErrorMessage(msg);
-      toast.error(msg);
+    const valErr = validateDocumentFormFiles({
+      existingDoc,
+      files,
+      title,
+      messages: {
+        fileRequired: t("fileRequired"),
+        titleRequired: t("titleRequired"),
+        fileTooLarge: t("fileTooLarge"),
+      },
+    });
+    if (valErr) {
+      setErrorMessage(valErr);
+      toast.error(valErr);
       return;
     }
 
     setIsSubmitting(true);
     setErrorMessage(null);
-
-    const result = await submitDocumentDirect({
+    const result = await executeDocumentSubmission({
       slug,
       existingDoc,
       title,
       description,
-      file,
+      files,
     });
-
     setIsSubmitting(false);
 
     if (result.success) {
-      toast.success(existingDoc ? t("documentUpdated") : t("documentCreated"));
+      toast.success(result.isUpdate ? t("documentUpdated") : t("documentCreated"));
       onSuccess();
       onClose();
-    } else {
-      const friendlyError = resolveDocumentErrorMessage(result.error, t);
-      setErrorMessage(friendlyError);
-      toast.error(friendlyError);
+      return;
     }
+
+    const friendly = resolveDocumentErrorMessage(result.error, t);
+    const msg = result.failedFile ? `${result.failedFile}: ${friendly}` : friendly;
+    setErrorMessage(msg);
+    toast.error(msg);
   };
 
   return {
@@ -75,8 +73,10 @@ export function useDocumentFormSubmit({
     setTitle,
     description,
     setDescription,
-    file,
-    setFile,
+    files,
+    setFiles,
+    file: files[0] ?? null,
+    setFile: (f: File | null) => setFiles(f ? [f] : []),
     isSubmitting,
     errorMessage,
     handleSubmit,
