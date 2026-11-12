@@ -1,6 +1,6 @@
 {
   "home": {
-    "title": "School Administration Portal",
+    "title": "Nasharat Mobile",
     "subtitle": "Circulars, maintenance requests, school calendar, and reports — in one place",
     "vision": "Our Vision",
     "mission": "Our Mission",
@@ -919,6 +919,6 @@
     "status": "System Setup in Progress",
     "contact": "For inquiries, please contact the administration.",
     "backHome": "Refresh Status",
-    "poweredBy": "School Administration Portal"
+    "poweredBy": "Nasharat Mobile"
   }
 }

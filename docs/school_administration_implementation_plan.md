@@ -1,4 +1,4 @@
-# School Administration Portal: Implementation Plan
+# Nasharat Mobile: Implementation Plan
 
 ## 1. Goal and Scope
 

@@ -424,7 +424,7 @@ Sequencing is deliberate: nothing touches the database until the tree compiles, 
    npm run test:e2e           # expect 8/8
    ```
 
-   If Kong returns 502 on `/auth/v1/*` after the reset, restart `supabase_kong_school-administration-portal`, wait ~8 s, and confirm `/auth/v1/health` = 200.
+   If Kong returns 502 on `/auth/v1/*` after the reset, restart `supabase_kong_nasharatmobile`, wait ~8 s, and confirm `/auth/v1/health` = 200.
 
 8. **Acceptance:** reset completes; battery green including the new checks; `select public.effective_permission_keys();` succeeds; `\df public.effective_permission_keys` shows exactly one signature.
 
@@ -517,17 +517,17 @@ npm run scan:secrets
 
 # 0048 ambiguity (rolled back, local only)
 #   wrap the migration body in  begin; … select public.effective_permission_keys(); rollback;
-docker exec -i supabase_db_school-administration-portal \
+docker exec -i supabase_db_nasharatmobile \
   psql -U postgres -d postgres -c "select proname, pg_get_function_identity_arguments(oid) from pg_proc where proname = 'effective_permission_keys';"
 
 # schema facts
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres -c \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres -c \
   "select conname, pg_get_constraintdef(oid) from pg_constraint where conrelid = 'public.roles'::regclass;"
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres -c \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres -c \
   "select tablename, policyname, cmd, with_check from pg_policies where tablename in ('roles','file_metadata');"
 
 # migration state
-docker exec -i supabase_db_school-administration-portal psql -U postgres -d postgres -c \
+docker exec -i supabase_db_nasharatmobile psql -U postgres -d postgres -c \
   "select version, name from supabase_migrations.schema_migrations order by version desc limit 3;"
 
 # i18n parity

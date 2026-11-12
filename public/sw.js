@@ -1,5 +1,5 @@
 /**
- * Service Worker for School Administration Portal PWA
+ * Service Worker for Nasharat Mobile PWA
  * Caching Strategy:
  * - Network-Only with Offline Fallback for HTML navigations (NEVER cache dynamic/authenticated pages)
  * - Stale-While-Revalidate for static assets, scripts, and fonts (_next/static, public static icons/css)

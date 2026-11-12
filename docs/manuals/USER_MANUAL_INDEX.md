@@ -1,6 +1,6 @@
-# School Administration Portal — Official User Manuals Index
+# Nasharat Mobile — Official User Manuals Index
 
-Welcome to the official user manual repository for the **School Administration Portal**.
+Welcome to the official user manual repository for the **Nasharat Mobile**.
 
 The portal is an enterprise-grade, Arabic-first school operations and governance system. Because the portal enforces strict separation of duties and zero-trust role-based access control (RBAC), each user role operates within its own dedicated workflows.
 

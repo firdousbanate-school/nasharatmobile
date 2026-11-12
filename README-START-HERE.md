@@ -2,14 +2,14 @@
 
 This bundle contains everything you need and nothing else.
 
-| File                             | What it is                                                                                                                                 |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `release-2026-11.patch`          | The whole release as one git patch (phone UI, security hardening, tests). Made against your `School-Administration-Portal-LAST.zip` files. |
-| `gemini-apply-release-prompt.md` | Paste this into Gemini (Antigravity). It applies the patch on a branch, runs every check, and opens ONE Pull Request.                      |
-| `RUN_LOCALLY_WINDOWS.md`         | How to run and test everything on localhost on Windows 11 (PowerShell).                                                                    |
-| `reference/`                     | Screenshots of the phone UI for comparison (4 images). Optional.                                                                           |
-| `optional-full-project/`         | The complete updated project as a zip. Only for Path B below.                                                                              |
-| `SHA256SUMS.txt`                 | Checksums, to confirm nothing was corrupted in download.                                                                                   |
+| File                             | What it is                                                                                                                   |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `release-2026-11.patch`          | The whole release as one git patch (phone UI, security hardening, tests). Made against your `nasharatmobile-LAST.zip` files. |
+| `gemini-apply-release-prompt.md` | Paste this into Gemini (Antigravity). It applies the patch on a branch, runs every check, and opens ONE Pull Request.        |
+| `RUN_LOCALLY_WINDOWS.md`         | How to run and test everything on localhost on Windows 11 (PowerShell).                                                      |
+| `reference/`                     | Screenshots of the phone UI for comparison (4 images). Optional.                                                             |
+| `optional-full-project/`         | The complete updated project as a zip. Only for Path B below.                                                                |
+| `SHA256SUMS.txt`                 | Checksums, to confirm nothing was corrupted in download.                                                                     |
 
 ## Path A (recommended): patch + Gemini
 
@@ -32,7 +32,7 @@ git apply ..\release-2026-11.patch
 Use only if you cannot apply the patch. Do this on a NEW branch, never on `main`:
 
 1. `git checkout -b release/2026-11`
-2. Unzip `optional-full-project\School-Administration-Portal-release-2026-11.zip` and copy its contents over
+2. Unzip `optional-full-project\nasharatmobile-release-2026-11.zip` and copy its contents over
    your project, replacing files. Keep your own `.env*` files, `node_modules` and `.git` (the zip has none of them).
 3. Copying does not delete files. Delete these 4 by hand (unused starter images):
    `public/globe.svg`, `public/next.svg`, `public/vercel.svg`, `public/window.svg`.

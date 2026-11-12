@@ -1,6 +1,6 @@
 ---
 name: mobile-pwa-ui
-description: Use this skill whenever creating or changing any screen, layout, component, dialog, form, table, or navigation in the School Administration Portal, so it works well on phones when installed as a PWA (bilingual Arabic RTL / English LTR, light and dark). Trigger on requests about mobile, phone, responsive, PWA, bottom navigation, bottom sheet, long pages, tables on small screens, or UI/UX.
+description: Use this skill whenever creating or changing any screen, layout, component, dialog, form, table, or navigation in the Nasharat Mobile, so it works well on phones when installed as a PWA (bilingual Arabic RTL / English LTR, light and dark). Trigger on requests about mobile, phone, responsive, PWA, bottom navigation, bottom sheet, long pages, tables on small screens, or UI/UX.
 ---
 
 # Mobile PWA UI skill

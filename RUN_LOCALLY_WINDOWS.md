@@ -14,7 +14,7 @@ Do not add the Supabase CLI to `package.json`; install it with Scoop so the proj
 ## 1. Get the code and apply the release (on a branch, never on main)
 
 ```powershell
-cd path\to\School-Administration-Portal
+cd path\to\nasharatmobile
 git status                      # must be clean
 git tag pre-release-2026-11
 git checkout -b release/2026-11

@@ -1,5 +1,5 @@
 # Supabase local development configuration (skeleton — completed in WP2).
-project_id = "school-administration-portal"
+project_id = "nasharatmobile"
 
 [api]
 enabled = true

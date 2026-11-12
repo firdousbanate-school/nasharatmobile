@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "School Administration Portal | بوابة الإدارة المدرسية",
+  "name": "Nasharat Mobile | بوابة الإدارة المدرسية",
   "short_name": "SchoolPortal",
   "description": "Enterprise school management and administrative communication portal",
   "start_url": "/",

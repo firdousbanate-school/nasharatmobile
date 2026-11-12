@@ -1,6 +1,6 @@
-# School Administration Portal — End-to-End Role Workflows
+# Nasharat Mobile — End-to-End Role Workflows
 
-This directory contains comprehensive, real-life operational workflows for every user role in the School Administration Portal, starting from a completely blank/empty deployment to full daily operations.
+This directory contains comprehensive, real-life operational workflows for every user role in the Nasharat Mobile, starting from a completely blank/empty deployment to full daily operations.
 
 ---
 
