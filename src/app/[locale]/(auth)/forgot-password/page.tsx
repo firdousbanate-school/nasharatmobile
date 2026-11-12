@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
-import { getSessionUser } from "@/lib/auth/getSessionUser";
+import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { getCurrentSchool } from "@/lib/school/getCurrentSchool";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { MailIcon } from "lucide-react";
@@ -14,8 +14,8 @@ export default async function ForgotPasswordPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const user = await getSessionUser();
-  if (user) redirect({ href: "/dashboard", locale });
+  const profile = await getCurrentProfile();
+  if (profile?.is_active) redirect({ href: "/dashboard", locale });
 
   const t = await getTranslations("auth");
   const school = await getCurrentSchool();
