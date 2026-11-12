@@ -1,0 +1,5 @@
+export function createCorrelationId(prefix = "err"): string {
+  const randomPart = Math.random().toString(36).substring(2, 10);
+  const timePart = Date.now().toString(36);
+  return `${prefix}_${timePart}${randomPart}`;
+}
