@@ -53,6 +53,36 @@ try {
       .select("id"),
   );
 
+  // -- Anonymous cannot reach server-only functions (0065) -----------------
+  // Supabase's default privileges grant EXECUTE on new public functions to anon
+  // explicitly, so `revoke ... from public` alone leaves them callable. These
+  // assertions are what make that regression visible.
+  const anonRateLimit = await anon.rpc("consume_rate_limit", {
+    p_key: `battery-anon-rate-limit-${ts}`,
+    p_limit: 1,
+    p_window_seconds: 60,
+  });
+  check(
+    "anon cannot consume a rate-limit token",
+    anonRateLimit.error !== null,
+    anonRateLimit.error?.message.slice(0, 70) ?? "RPC unexpectedly succeeded",
+  );
+  const anonCounters = await anon.from("rate_limit_counters").select("key");
+  check(
+    "anon cannot read rate-limit counters",
+    anonCounters.error !== null,
+    anonCounters.error?.message.slice(0, 70) ?? "read unexpectedly allowed",
+  );
+  const anonAuditActor = await anon.rpc("set_audit_actor", {
+    p_actor_id: fx.users.staff1.id,
+    p_actor_label: "battery-anon",
+  });
+  check(
+    "anon cannot set the audit actor",
+    anonAuditActor.error !== null,
+    anonAuditActor.error?.message.slice(0, 70) ?? "RPC unexpectedly succeeded",
+  );
+
   // -- C1: the app's owner-existence query must return a usable count ------
   const ownerProbe = await admin
     .from("user_role_assignments")
@@ -75,6 +105,27 @@ try {
   const disabledC = await signInAs(env, fx.creds.disabled.email, fx.creds.disabled.password);
   const admin2C = await signInAs(env, fx.creds.admin2.email, fx.creds.admin2.password);
   const ownerC = await signInAs(env, fx.creds.owner.email, fx.creds.owner.password);
+
+  // -- Server-only functions stay server-only for signed-in callers (0065) --
+  const staffRateLimit = await staffC.rpc("consume_rate_limit", {
+    p_key: `battery-staff-rate-limit-${ts}`,
+    p_limit: 1,
+    p_window_seconds: 60,
+  });
+  check(
+    "staff cannot consume a rate-limit token",
+    staffRateLimit.error !== null,
+    staffRateLimit.error?.message.slice(0, 70) ?? "RPC unexpectedly succeeded",
+  );
+  const staffAuditActor = await staffC.rpc("set_audit_actor", {
+    p_actor_id: fx.users.staff1.id,
+    p_actor_label: "battery-staff",
+  });
+  check(
+    "staff can still set their own audit actor",
+    staffAuditActor.error === null,
+    staffAuditActor.error?.message.slice(0, 70) ?? "",
+  );
 
   // -- School admin --------------------------------------------------------
   check("admin sees all three circulars", (await visibleCount(adminC, "circulars")).count === 3);
