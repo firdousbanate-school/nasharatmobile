@@ -24,6 +24,7 @@ export function PublicCircularMonthSelect({
       </div>
 
       <select
+        suppressHydrationWarning
         value={selectedMonth}
         onChange={(e) => onSelectMonth(e.target.value)}
         aria-label={t("selectMonth")}

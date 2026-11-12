@@ -33,7 +33,7 @@ export function PublicCircularMonthFilter({
                 : "border border-border/70 bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
             }`}
           >
-            <span>{month.label}</span>
+            <span suppressHydrationWarning>{month.label}</span>
             <span
               className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
                 isSelected

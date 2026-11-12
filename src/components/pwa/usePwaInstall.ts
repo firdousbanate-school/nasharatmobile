@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { detectIosDevice } from "./detectIosDevice";
 import { isStandaloneMode } from "./isStandaloneMode";
 
@@ -9,11 +9,14 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
+const emptySubscribe = () => () => {};
+const getServerSnapshotFalse = () => false;
+
 export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [hasPrompt, setHasPrompt] = useState(false);
-  const [isIos] = useState(() => detectIosDevice());
-  const [isStandalone] = useState(() => isStandaloneMode());
+  const isIos = useSyncExternalStore(emptySubscribe, detectIosDevice, getServerSnapshotFalse);
+  const isStandalone = useSyncExternalStore(emptySubscribe, isStandaloneMode, getServerSnapshotFalse);
   const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
