@@ -1,6 +1,7 @@
 "use client";
 
 import type { UnifiedCalendarItem } from "@/lib/calendar/types";
+import { getKuwaitDateParts } from "@/lib/calendar/getKuwaitDateParts";
 import { PublicCalendarDayButton } from "./PublicCalendarDayButton";
 import { PublicCalendarLegend } from "./PublicCalendarLegend";
 
@@ -25,9 +26,9 @@ export function PublicCalendarMonthGrid({
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const totalDays = new Date(year, month + 1, 0).getDate();
-  const today = new Date();
+  const firstDayIndex = new Date(Date.UTC(year, month, 1)).getUTCDay();
+  const totalDays = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  const today = getKuwaitDateParts(new Date());
 
   const weekdays = locale === "en" ? WEEKDAYS_EN : WEEKDAYS_AR;
 
@@ -37,8 +38,7 @@ export function PublicCalendarMonthGrid({
   }
 
   for (let d = 1; d <= totalDays; d++) {
-    const isToday =
-      today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+    const isToday = today.year === year && today.month === month && today.day === d;
     const isSelected =
       selectedDate !== null &&
       selectedDate.getFullYear() === year &&
@@ -46,12 +46,8 @@ export function PublicCalendarMonthGrid({
       selectedDate.getDate() === d;
 
     const dayItems = items.filter((item) => {
-      const itemDate = new Date(item.date);
-      return (
-        itemDate.getFullYear() === year &&
-        itemDate.getMonth() === month &&
-        itemDate.getDate() === d
-      );
+      const itemParts = getKuwaitDateParts(item.date);
+      return itemParts.year === year && itemParts.month === month && itemParts.day === d;
     });
 
     cells.push({ day: d, isToday, isSelected, dayItems });

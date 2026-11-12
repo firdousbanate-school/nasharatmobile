@@ -1,15 +1,16 @@
 "use client";
 
+import { getKuwaitDateParts } from "@/lib/calendar/getKuwaitDateParts";
+
 interface PublicCalendarDateBadgeProps {
   date: string | Date;
   locale?: string;
 }
 
 export function PublicCalendarDateBadge({ date }: PublicCalendarDateBadgeProps) {
-  const d = new Date(date);
-  const day = d.getDate();
-  const monthAbbr = d
-    .toLocaleDateString("en-US", { month: "short" })
+  const { day } = getKuwaitDateParts(date);
+  const monthAbbr = new Date(date)
+    .toLocaleDateString("en-US", { month: "short", timeZone: "Asia/Kuwait" })
     .toUpperCase();
 
   return (
