@@ -33,11 +33,12 @@ const securityHeaders = [
 const nextConfig = {
   devIndicators: false,
   experimental: {
+    // School documents allow up to 20 MB (src/lib/documents/uploadDocumentFile.ts);
+    // both proxy body buffering (default 10 MB) and serverActions must allow the
+    // 20 MB payload plus multipart FormData overhead to prevent stream truncation.
+    proxyClientMaxBodySize: "22mb",
     serverActions: {
-      // Restore uploads carry a whole backup in one action call. The client
-      // refuses files above MAX_BACKUP_BYTES (10 MB, src/lib/backup/maxBackupBytes.ts);
-      // this leaves room for the action envelope around that file.
-      bodySizeLimit: "12mb",
+      bodySizeLimit: "22mb",
     },
   },
   // The E2E gate builds with its own output directory so it never overwrites
