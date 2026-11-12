@@ -7,6 +7,9 @@ import type { E2eUser } from "./seedE2eFixture";
  */
 export async function loginAs(page: Page, user: E2eUser): Promise<void> {
   await page.goto("/en/login");
+  if (page.url().includes("/en/dashboard")) {
+    return;
+  }
   await page.getByLabel("Email").fill(user.email);
   await page.getByLabel("Password").fill(user.password);
   await page.getByRole("button", { name: "Sign in" }).click();
