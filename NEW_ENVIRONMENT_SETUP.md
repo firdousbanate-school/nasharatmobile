@@ -54,20 +54,21 @@ Dashboard menu names change over time; if a label differs, search for the settin
 - **Region:** Project Settings, Functions: choose the region nearest your Supabase region.
 - **Environment variables** (mark secrets as Sensitive; set them per environment):
 
-| Variable | Production | Preview |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | prod project | staging project (or same, if you accept the risk) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | prod publishable key | staging key |
-| `SUPABASE_SERVICE_ROLE_KEY` | prod secret key | staging secret key |
-| `SCHOOL_TIMEZONE` | e.g. `Asia/Kuwait` | same |
-| `APP_URL` | final URL, no trailing slash | leave unset or use the staging URL (auth emails are built from it) |
-| `PLATFORM_BOOTSTRAP_SECRET` and/or `PLATFORM_OWNER_EMAIL` | needed only until the first owner exists | optional |
-| `CRON_SECRET` | long random value; Vercel sends it to the cron as a Bearer token | not needed |
-| `HEALTH_CHECK_SECRET` | long random value | optional |
-| `ERROR_REPORTING_URL` / `_TOKEN` | optional Sentry-style endpoint, otherwise errors are only in Vercel logs | optional |
+| Variable                                                  | Production                                                               | Preview                                                            |
+| --------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`                                | prod project                                                             | staging project (or same, if you accept the risk)                  |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`                           | prod publishable key                                                     | staging key                                                        |
+| `SUPABASE_SERVICE_ROLE_KEY`                               | prod secret key                                                          | staging secret key                                                 |
+| `SCHOOL_TIMEZONE`                                         | e.g. `Asia/Kuwait`                                                       | same                                                               |
+| `APP_URL`                                                 | final URL, no trailing slash                                             | leave unset or use the staging URL (auth emails are built from it) |
+| `PLATFORM_BOOTSTRAP_SECRET` and/or `PLATFORM_OWNER_EMAIL` | needed only until the first owner exists                                 | optional                                                           |
+| `CRON_SECRET`                                             | long random value; Vercel sends it to the cron as a Bearer token         | not needed                                                         |
+| `HEALTH_CHECK_SECRET`                                     | long random value                                                        | optional                                                           |
+| `ERROR_REPORTING_URL` / `_TOKEN`                          | optional Sentry-style endpoint, otherwise errors are only in Vercel logs | optional                                                           |
 
-  Do not bother with `DISABLE_UNDER_CONSTRUCTION` or `UNDER_CONSTRUCTION_BYPASS_SECRET`: in your code
-  `isUnderConstruction()` always returns false ("cancelled"), so those settings do nothing.
+Do not bother with `DISABLE_UNDER_CONSTRUCTION` or `UNDER_CONSTRUCTION_BYPASS_SECRET`: in your code
+`isUnderConstruction()` always returns false ("cancelled"), so those settings do nothing.
+
 - **Deployment Protection:** keep "Vercel Authentication" on for Preview deployments so previews are not public.
 - **Plan:** Vercel's free (Hobby) plan is for non-commercial use; check their terms for a school deployment.
   Your cron (every 3 days) fits the free limits.
