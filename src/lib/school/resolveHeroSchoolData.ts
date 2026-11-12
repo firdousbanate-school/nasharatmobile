@@ -7,6 +7,7 @@ export interface HeroSchoolData {
   manager: string | null;
   assistant1: string | null;
   assistant2: string | null;
+  assistant3: string | null;
 }
 
 export function resolveHeroSchoolData(
@@ -20,6 +21,7 @@ export function resolveHeroSchoolData(
       manager: null,
       assistant1: null,
       assistant2: null,
+      assistant3: null,
     };
   }
 
@@ -36,6 +38,11 @@ export function resolveHeroSchoolData(
       locale,
       school.assistant_manager_2_ar,
       school.assistant_manager_2_en,
+    ),
+    assistant3: resolveLocalizedText(
+      locale,
+      school.assistant_manager_3_ar,
+      school.assistant_manager_3_en,
     ),
   };
 }

@@ -1,4 +1,7 @@
 export { getCircularById, type CircularDetail } from "./getCircularById";
+export { getCircularMonths, type CircularMonthOption } from "./getCircularMonths";
+export { getPublicCircularById } from "./getPublicCircularById";
+export { getPublicCirculars } from "./getPublicCirculars";
 export { getCircularResponses } from "./getCircularResponses";
 export {
   getCircularDepartmentStatuses,

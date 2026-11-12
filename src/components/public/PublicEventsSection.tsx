@@ -11,11 +11,11 @@ interface PublicEventsSectionProps {
   circulars?: CircularRow[];
 }
 
-export function PublicEventsSection({ events, circulars = [] }: PublicEventsSectionProps) {
+export function PublicEventsSection({ events }: PublicEventsSectionProps) {
   const locale = useLocale();
   const t = useTranslations("home");
 
-  const unifiedItems = buildUnifiedCalendarItems(events, circulars);
+  const unifiedItems = buildUnifiedCalendarItems(events, []);
 
   return (
     <section id="events" className="border-t border-border/60 py-20 px-4 sm:px-8 lg:px-12 xl:px-16">

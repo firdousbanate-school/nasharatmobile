@@ -4,7 +4,7 @@ import type { UnifiedCalendarItem } from "@/lib/calendar/types";
 import { PublicCalendarDayButton } from "./PublicCalendarDayButton";
 import { PublicCalendarLegend } from "./PublicCalendarLegend";
 
-const WEEKDAYS_AR = ["أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"];
+const WEEKDAYS_AR = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 const WEEKDAYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface PublicCalendarMonthGridProps {

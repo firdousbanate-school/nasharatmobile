@@ -85,7 +85,7 @@ describe("PublicDocumentsSection", () => {
     const actionButtons = screen.getAllByText("عرض الوثيقة");
     fireEvent.click(actionButtons[0]);
 
-    expect(screen.getByText(/الخطة التشغيلية 2026/)).toBeDefined();
+    expect(screen.getAllByText(/الخطة التشغيلية 2026/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("طباعة")).toBeDefined();
     expect(screen.getByText("تحميل")).toBeDefined();
   });

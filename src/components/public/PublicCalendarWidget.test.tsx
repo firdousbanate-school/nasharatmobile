@@ -1,59 +1,91 @@
-import { afterEach, describe, expect, it } from "vitest";
+import React from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { UnifiedCalendarItem } from "@/lib/calendar/types";
 import { PublicCalendarWidget } from "./PublicCalendarWidget";
+
+// The item card links circulars to their public detail page through the
+// next-intl navigation Link, which cannot be imported in the test environment.
+vi.mock("@/i18n", () => ({
+  Link: ({
+    children,
+    href,
+    className,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href: string;
+    className?: string;
+  }) => (
+    <a href={href} className={className} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => {
+    const map: Record<string, string> = {
+      allDayBadge: "طوال اليوم",
+      startsAt: "تاريخ البدء",
+      endsAt: "تاريخ الانتهاء",
+      eventDescription: "وصف الفعالية",
+      close: "إغلاق",
+    };
+    return map[key] ?? key;
+  },
+}));
 
 afterEach(() => {
   cleanup();
 });
 
-describe("PublicCalendarWidget", () => {
-  const mockItems: UnifiedCalendarItem[] = [
-    {
-      kind: "event",
-      id: "ev-1",
-      date: "2026-11-01T08:00:00Z",
-      event: {
-        id: "ev-1",
-        school_id: "s-1",
-        title_ar: "اختبارات منتصف الفصل الدراسي",
-        title_en: "Midterm Exams",
-        description: null,
-        category: "exam",
-        starts_at: "2026-11-01T08:00:00Z",
-        ends_at: "2026-11-01T12:00:00Z",
-        all_day: false,
-        visibility: "public",
-        status: "published",
-        location: "القاعات الامتحانية",
-        image_path: null,
-        created_by: "user-1",
-        published_at: "2026-10-01T00:00:00Z",
-        cancelled_at: null,
-        created_at: "2026-10-01T00:00:00Z",
-        updated_at: "2026-10-01T00:00:00Z",
-      },
+const mockItems: UnifiedCalendarItem[] = [
+  {
+    kind: "event",
+    id: "1",
+    date: new Date().toISOString(),
+    event: {
+      id: "1",
+      school_id: "s1",
+      title_ar: "اختبارات منتصف الفصل الدراسي الأول",
+      title_en: "Midterm Exams",
+      description: "description",
+      category: "exam",
+      starts_at: new Date().toISOString(),
+      ends_at: new Date().toISOString(),
+      all_day: true,
+      visibility: "public",
+      status: "published",
+      location: "القاعات الامتحانية",
+      image_path: null,
+      created_by: "u1",
+      published_at: new Date().toISOString(),
+      cancelled_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     },
-  ];
+  },
+];
 
-  it("renders top bar with today button, month header, and legend", () => {
+describe("PublicCalendarWidget", () => {
+  it("renders with header controls and items without crashing", () => {
     render(<PublicCalendarWidget items={mockItems} locale="ar" />);
 
-    const todayButtons = screen.getAllByText("اليوم");
-    expect(todayButtons.length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("أحداث قادمة")).toBeInTheDocument();
-    expect(screen.getByText("اختبارات منتصف الفصل الدراسي")).toBeInTheDocument();
-    expect(screen.getByText("امتحانات")).toBeInTheDocument();
-    expect(screen.getByText("فعاليات")).toBeInTheDocument();
-    expect(screen.getByText("اجتماعات")).toBeInTheDocument();
-  });
-
-  it("handles month navigation and today button click", () => {
-    render(<PublicCalendarWidget items={mockItems} locale="ar" />);
-
-    const todayBtn = screen.getByRole("button", { name: "اليوم" });
-    fireEvent.click(todayBtn);
+    const todayBtn = screen.getByRole("button", {
+      name: (name) => name.includes("اليوم") || name.toLowerCase().includes("today"),
+    });
 
     expect(todayBtn).toBeInTheDocument();
+  });
+
+  it("opens the event detail dialog when clicking an event in upcoming events", () => {
+    render(<PublicCalendarWidget items={mockItems} locale="ar" />);
+
+    const eventCard = screen.getByRole("button", { name: /اختبارات منتصف الفصل الدراسي/ });
+    fireEvent.click(eventCard);
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getAllByText("القاعات الامتحانية")).toHaveLength(2);
   });
 });

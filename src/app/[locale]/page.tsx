@@ -7,6 +7,7 @@ import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { isPlatformOwner } from "@/lib/auth/isPlatformOwner";
 import { PublicTopBar } from "@/components/public/PublicTopBar";
 import { PublicHero } from "@/components/public/PublicHero";
+import { PublicCircularsSection } from "@/components/public/PublicCircularsSection";
 import { PublicEventsSection } from "@/components/public/PublicEventsSection";
 import { PublicFooter } from "@/components/public/PublicFooter";
 
@@ -29,7 +30,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <PublicTopBar school={school} events={events} isOwner={isOwner} />
       <main className="flex-1">
         <PublicHero school={school} documents={documents} />
-        <PublicEventsSection events={events} circulars={circulars} />
+        <PublicCircularsSection circulars={circulars} />
+        <PublicEventsSection events={events} />
       </main>
       <PublicFooter />
     </div>
