@@ -38,9 +38,10 @@ export function PublicCalendarDayButton({
         type="button"
         onClick={onSelect}
         aria-pressed={isSelected}
+        suppressHydrationWarning
         className={`relative flex size-9 flex-col items-center justify-center rounded-xl text-sm transition-all sm:size-11 sm:text-base ${baseStyle}`}
       >
-        <span>{day}</span>
+        <span suppressHydrationWarning>{day}</span>
         {primaryDot && (
           <span
             className={`absolute bottom-1 size-1.5 rounded-full ${isSelected ? "bg-[#0c1f44]" : primaryDot}`}

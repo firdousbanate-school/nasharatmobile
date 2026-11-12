@@ -14,7 +14,7 @@ interface PublicCalendarWidgetProps {
 
 export function PublicCalendarWidget({ items, locale }: PublicCalendarWidgetProps) {
   const [currentDate, setCurrentDate] = useState(() => new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(() => new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedItem, setSelectedItem] = useState<UnifiedCalendarItem | null>(null);
 
   const handlePrevMonth = () => {

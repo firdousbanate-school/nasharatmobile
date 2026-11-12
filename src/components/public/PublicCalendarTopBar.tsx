@@ -34,9 +34,9 @@ export function PublicCalendarTopBar({
         {todayLabel}
       </button>
 
-      <div className="flex items-center gap-2 font-heading text-base font-black sm:text-xl">
-        <span className="text-[#e5a93b]">{monthName}</span>
-        <span className="text-white">{year}</span>
+      <div className="flex items-center gap-2 font-heading text-base font-black sm:text-xl" suppressHydrationWarning>
+        <span className="text-[#e5a93b]" suppressHydrationWarning>{monthName}</span>
+        <span className="text-white" suppressHydrationWarning>{year}</span>
       </div>
 
       <div className="flex items-center gap-1 rounded-lg bg-[#1a2e56] p-1">
