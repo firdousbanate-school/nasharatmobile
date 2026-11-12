@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { PublicInstagramLink } from "./PublicInstagramLink";
+import { PublicTopBarLoginButton } from "./PublicTopBarLoginButton";
 import { KuwaitMoeLink } from "./KuwaitMoeLink";
 import { PublicTopBarTicker } from "./PublicTopBarTicker";
 import type { CalendarEventRow } from "@/lib/calendar/types";
@@ -49,6 +50,7 @@ export function PublicTopBar({
 
         <div className="flex shrink-0 items-center justify-center gap-2.5 md:justify-end">
           <PublicInstagramLink url={school?.instagram_url} />
+          <PublicTopBarLoginButton />
           {isOwner ? (
             <>
               <LanguageSwitcher />

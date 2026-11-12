@@ -5,6 +5,7 @@ import type { UnifiedCalendarItem } from "@/lib/calendar/types";
 import { PublicCalendarTopBar } from "./PublicCalendarTopBar";
 import { PublicCalendarUpcomingList } from "./PublicCalendarUpcomingList";
 import { PublicCalendarMonthGrid } from "./PublicCalendarMonthGrid";
+import { PublicCalendarEventDetailDialog } from "./PublicCalendarEventDetailDialog";
 
 interface PublicCalendarWidgetProps {
   items: UnifiedCalendarItem[];
@@ -14,6 +15,7 @@ interface PublicCalendarWidgetProps {
 export function PublicCalendarWidget({ items, locale }: PublicCalendarWidgetProps) {
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => new Date());
+  const [selectedItem, setSelectedItem] = useState<UnifiedCalendarItem | null>(null);
 
   const handlePrevMonth = () => {
     setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
@@ -46,6 +48,7 @@ export function PublicCalendarWidget({ items, locale }: PublicCalendarWidgetProp
             selectedDate={selectedDate}
             locale={locale}
             onClearDateFilter={() => setSelectedDate(null)}
+            onSelectItem={setSelectedItem}
           />
         </div>
         <div className="lg:col-span-7">
@@ -58,6 +61,15 @@ export function PublicCalendarWidget({ items, locale }: PublicCalendarWidgetProp
           />
         </div>
       </div>
+
+      {selectedItem && (
+        <PublicCalendarEventDetailDialog
+          item={selectedItem}
+          isOpen={true}
+          locale={locale}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
     </div>
   );
 }

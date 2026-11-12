@@ -10,6 +10,7 @@ interface PublicCalendarUpcomingListProps {
   selectedDate: Date | null;
   locale: string;
   onClearDateFilter: () => void;
+  onSelectItem?: (item: UnifiedCalendarItem) => void;
 }
 
 export function PublicCalendarUpcomingList({
@@ -17,6 +18,7 @@ export function PublicCalendarUpcomingList({
   selectedDate,
   locale,
   onClearDateFilter,
+  onSelectItem,
 }: PublicCalendarUpcomingListProps) {
   const isEn = locale === "en";
   const { displayItems, isShowingFallback } = filterUpcomingCalendarItems(items, selectedDate);
@@ -56,7 +58,12 @@ export function PublicCalendarUpcomingList({
       ) : (
         <div className="flex flex-col gap-3">
           {displayItems.map((item) => (
-            <PublicCalendarItemCard key={`${item.kind}-${item.id}`} item={item} locale={locale} />
+            <PublicCalendarItemCard
+              key={`${item.kind}-${item.id}`}
+              item={item}
+              locale={locale}
+              onSelect={onSelectItem}
+            />
           ))}
         </div>
       )}

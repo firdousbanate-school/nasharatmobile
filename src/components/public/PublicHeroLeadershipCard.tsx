@@ -14,16 +14,18 @@ export function PublicHeroLeadershipCard({
   manager,
   assistant1,
   assistant2,
+  assistant3,
 }: {
   manager?: string | null;
   assistant1?: string | null;
   assistant2?: string | null;
+  assistant3?: string | null;
 }) {
   const t = useTranslations("home");
   const tSettings = useTranslations("settings");
 
   return (
-    <div className={`${CARD_SHELL} ${CARD_HERO_PADDING} w-full`}>
+    <div className={`${CARD_SHELL} ${CARD_HERO_PADDING} h-full w-full`}>
       <div className={CARD_DIAMOND}>
         <UserCheckIcon className={`size-5 ${CARD_DIAMOND_ICON}`} />
       </div>
@@ -47,6 +49,12 @@ export function PublicHeroLeadershipCard({
           <p>
             {t("assistantManager2Title")}:{" "}
             <span className="font-semibold text-foreground">{assistant2}</span>
+          </p>
+        )}
+        {assistant3 && (
+          <p>
+            {t("assistantManager3Title")}:{" "}
+            <span className="font-semibold text-foreground">{assistant3}</span>
           </p>
         )}
       </div>
