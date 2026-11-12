@@ -1,22 +1,52 @@
 "use client";
 
-import Image from "next/image";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ExternalLinkIcon, ImageIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { ImageIcon } from "lucide-react";
 import { GoldDots } from "@/components/ui/gold-dots";
+import { deleteMaintenanceAttachmentAction } from "@/actions/maintenance/deleteMaintenanceAttachmentAction";
 import type { MaintenanceAttachmentRow } from "@/lib/maintenance/types";
+import { MaintenanceAttachmentCard } from "./MaintenanceAttachmentCard";
 
 export function MaintenanceAttachmentsList({
   attachments,
+  canManage = true,
 }: {
   attachments: MaintenanceAttachmentRow[];
+  canManage?: boolean;
 }) {
   const t = useTranslations("maintenance");
+  const tCommon = useTranslations("common");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   if (attachments.length === 0) {
     return null;
   }
+
+  const handleDelete = (attachmentId: string, requestId: string) => {
+    if (
+      !confirm(
+        tCommon("confirmDelete", {
+          defaultValue: "Are you sure you want to delete this attachment?",
+        }),
+      )
+    ) {
+      return;
+    }
+
+    setDeletingId(attachmentId);
+    startTransition(async () => {
+      const res = await deleteMaintenanceAttachmentAction(attachmentId, requestId);
+      if (res.success) {
+        toast.success(tCommon("deleted", { defaultValue: "Attachment deleted" }));
+      } else {
+        toast.error(res.error || tCommon("error"));
+      }
+      setDeletingId(null);
+    });
+  };
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-[0_12px_30px_rgba(20,37,74,.10)]">
@@ -28,43 +58,13 @@ export function MaintenanceAttachmentsList({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {attachments.map((att) => (
-          <div
+          <MaintenanceAttachmentCard
             key={att.id}
-            className="group relative overflow-hidden rounded-lg border border-border bg-muted/30 p-2 transition hover:shadow-sm"
-          >
-            {att.public_url ? (
-              <div className="aspect-video w-full overflow-hidden rounded-md bg-scrim/5">
-                <Image
-                  src={att.public_url}
-                  alt={att.kind}
-                  width={400}
-                  height={225}
-                  unoptimized
-                  className="size-full object-cover transition group-hover:scale-105"
-                />
-              </div>
-            ) : (
-              <div className="flex aspect-video w-full items-center justify-center rounded-md bg-muted text-muted-foreground">
-                <ImageIcon className="size-8" />
-              </div>
-            )}
-
-            <div className="mt-2 flex items-center justify-between text-xs">
-              <Badge variant="outline" className="text-[10px]">
-                {att.kind === "report" ? t("reportPhoto") : t("evidencePhoto")}
-              </Badge>
-              {att.public_url && (
-                <a
-                  href={att.public_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
-                >
-                  <ExternalLinkIcon className="size-3" />
-                </a>
-              )}
-            </div>
-          </div>
+            att={att}
+            canManage={canManage}
+            isDeleting={isPending && deletingId === att.id}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
     </div>

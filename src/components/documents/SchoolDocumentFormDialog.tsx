@@ -1,12 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Loader2Icon, XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { MultiFileInput } from "@/components/ui/MultiFileInput";
 import { useDocumentFormSubmit } from "./useDocumentFormSubmit";
 import { SchoolDocumentFileInput } from "./SchoolDocumentFileInput";
 import { SchoolDocumentTextInputs } from "./SchoolDocumentTextInputs";
+import { SchoolDocumentDialogActions } from "./SchoolDocumentDialogActions";
 import type { SchoolDocumentRow, SchoolDocumentSlug } from "@/lib/documents/types";
 
 export function SchoolDocumentFormDialog({
@@ -29,7 +31,8 @@ export function SchoolDocumentFormDialog({
     setTitle,
     description,
     setDescription,
-    setFile,
+    files,
+    setFiles,
     isSubmitting,
     errorMessage,
     handleSubmit,
@@ -63,27 +66,25 @@ export function SchoolDocumentFormDialog({
             onDescriptionChange={setDescription}
           />
 
-          <SchoolDocumentFileInput
-            isEditing={isEditing}
-            currentFileName={existingDoc?.file_name}
-            onFileChange={setFile}
-          />
+          {isEditing ? (
+            <SchoolDocumentFileInput
+              isEditing={isEditing}
+              currentFileName={existingDoc?.file_name}
+              onFileChange={(f) => setFiles(f ? [f] : [])}
+            />
+          ) : (
+            <div className="border-t border-border pt-3">
+              <MultiFileInput
+                id="school-document-files"
+                label={t("chooseFile")}
+                files={files}
+                onFilesChange={setFiles}
+                accept="application/pdf,image/jpeg,image/png,image/webp"
+              />
+            </div>
+          )}
 
-          <div className="flex items-center justify-end gap-2.5 border-t border-border/80 pt-3">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-              {t("cancel")}
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="min-w-[90px]">
-              {isSubmitting ? (
-                <>
-                  <Loader2Icon className="mr-1.5 size-4 animate-spin" />
-                  <span>{t("saving")}</span>
-                </>
-              ) : (
-                <span>{t("save")}</span>
-              )}
-            </Button>
-          </div>
+          <SchoolDocumentDialogActions onClose={onClose} isSubmitting={isSubmitting} />
         </form>
       </DialogContent>
     </Dialog>

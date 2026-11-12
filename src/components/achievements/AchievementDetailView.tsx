@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Trash2Icon, PencilIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AchievementDetailMetaGrid } from "./AchievementDetailMetaGrid";
+import { AchievementAttachmentsList } from "./AchievementAttachmentsList";
 import type { SchoolAchievementRow } from "@/lib/achievements/types";
 
 export function AchievementDetailView({
@@ -38,6 +39,12 @@ export function AchievementDetailView({
           </p>
         </div>
       )}
+
+      <AchievementAttachmentsList
+        achievementId={achievement.id}
+        attachments={achievement.attachments}
+        canManage={canManage}
+      />
 
       <div className="flex items-center justify-between border-t border-border pt-4">
         <div className="flex items-center gap-2">

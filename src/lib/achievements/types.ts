@@ -3,6 +3,14 @@ export type AchievementCategory =
 
 export type AchievementVisibility = "public" | "internal";
 
+export interface AchievementAttachmentRow {
+  id: string;
+  path: string;
+  mime?: string | null;
+  size_bytes?: number | null;
+  created_at: string;
+}
+
 export interface SchoolAchievementRow {
   id: string;
   school_id: string;
@@ -24,6 +32,7 @@ export interface SchoolAchievementRow {
     id: string;
     full_name: string;
   } | null;
+  attachments?: AchievementAttachmentRow[];
   created_at: string;
   updated_at: string;
 }

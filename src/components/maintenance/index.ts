@@ -17,3 +17,6 @@ export { MaintenanceReasonForm } from "./MaintenanceReasonForm";
 export { MaintenanceTimeline } from "./MaintenanceTimeline";
 export { MaintenanceAddNoteBox } from "./MaintenanceAddNoteBox";
 export { MaintenanceAttachmentsList } from "./MaintenanceAttachmentsList";
+export { EditMaintenanceDialog } from "./EditMaintenanceDialog";
+export { MaintenanceDeleteDialog } from "./MaintenanceDeleteDialog";
+export { MaintenanceRowActions } from "./MaintenanceRowActions";

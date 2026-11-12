@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createQueryChain } from "@/test-utils/createQueryChain";
 import { deleteAchievementRecord } from "./deleteAchievementRecord";
@@ -7,10 +7,18 @@ import { updateAchievementRecord } from "./updateAchievementRecord";
 function clientFor(result: Parameters<typeof createQueryChain>[0]) {
   const query = createQueryChain(result);
   const from = (table: string) => {
-    expect(table).toBe("school_achievements");
+    expect(["school_achievements", "achievement_attachments"]).toContain(table);
     return query.chain;
   };
-  return { supabase: { from } as unknown as SupabaseClient, calls: query.calls };
+  const storage = {
+    from: () => ({
+      remove: vi.fn().mockResolvedValue({}),
+    }),
+  };
+  return {
+    supabase: { from, storage } as unknown as SupabaseClient,
+    calls: query.calls,
+  };
 }
 
 const input = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n";
 import { toast } from "sonner";
@@ -8,14 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PANEL } from "@/components/ui/diamond-card-styles";
-import { updateCircularAction } from "@/actions/circulars/updateCircularAction";
-import { circularDocumentRules } from "@/lib/circulars/circularDocumentRules";
-import { validateFormDataFiles } from "@/lib/storage/validateFormDataFiles";
 import { DepartmentTargetPicker } from "./DepartmentTargetPicker";
-import { CircularFileUpload } from "./CircularFileUpload";
+import { MultiFileInput } from "@/components/ui/MultiFileInput";
 import { CircularAttachmentsList } from "./CircularAttachmentsList";
 import { EditCircularFieldsGrid } from "./EditCircularFieldsGrid";
 import { EditCircularActions } from "./EditCircularActions";
+import { handleEditCircularSubmit } from "./handleEditCircularSubmit";
 import type { CircularDetail } from "@/lib/circulars/getCircularById";
 import type { DepartmentRow } from "@/lib/school/getSchoolDepartments";
 
@@ -29,26 +27,20 @@ export function EditCircularForm({
   const t = useTranslations("circulars");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (formData: FormData) => {
-    const validation = validateFormDataFiles(formData, "documents", {
-      allowedMimes: circularDocumentRules.allowedMime,
-      maxBytes: circularDocumentRules.maxBytes,
-    });
-    if (!validation.valid) {
-      toast.error(validation.error);
-      return;
-    }
-
     startTransition(async () => {
-      const res = await updateCircularAction(circular.id, formData);
-      if (res.success) {
-        toast.success(tCommon("saved"));
-        router.push(`/circulars/${circular.id}`);
-      } else {
-        toast.error(res.error ?? "Failed to update circular");
-      }
+      await handleEditCircularSubmit({
+        circularId: circular.id,
+        formData,
+        selectedFiles,
+        onSuccess: () => {
+          toast.success(tCommon("saved"));
+          router.push(`/circulars/${circular.id}`);
+        },
+      });
     });
   };
 
@@ -89,7 +81,15 @@ export function EditCircularForm({
         />
       ) : null}
 
-      <CircularFileUpload />
+      <div className="border-t border-border pt-4">
+        <MultiFileInput
+          id="circular_documents_edit"
+          label={t("uploadDocuments")}
+          files={selectedFiles}
+          onFilesChange={setSelectedFiles}
+          accept="application/pdf,image/jpeg,image/png,image/webp"
+        />
+      </div>
 
       <EditCircularActions
         isPending={isPending}

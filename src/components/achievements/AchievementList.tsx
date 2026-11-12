@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { TrophyIcon } from "lucide-react";
 import { AchievementCard } from "./AchievementCard";
 import { AchievementDetailDialog } from "./AchievementDetailDialog";
 import { CreateAchievementDialog } from "./CreateAchievementDialog";
+import { deleteAchievementAction } from "@/actions/achievements/deleteAchievementAction";
 import type { SchoolAchievementRow } from "@/lib/achievements/types";
 import type { DepartmentRow } from "@/lib/school/getSchoolDepartments";
 
@@ -19,7 +21,30 @@ export function AchievementList({
   canManage: boolean;
 }) {
   const t = useTranslations("achievements");
+  const tCommon = useTranslations("common");
   const [selectedAchievement, setSelectedAchievement] = useState<SchoolAchievementRow | null>(null);
+  const [, startTransition] = useTransition();
+
+  const handleDelete = (item: SchoolAchievementRow) => {
+    if (
+      !confirm(
+        tCommon("confirmDelete", {
+          defaultValue: "Are you sure you want to permanently delete this achievement?",
+        }),
+      )
+    ) {
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await deleteAchievementAction(item.id);
+      if (res.success) {
+        toast.success(tCommon("deleted", { defaultValue: "Deleted successfully" }));
+      } else {
+        toast.error(res.error || tCommon("error"));
+      }
+    });
+  };
 
   if (achievements.length === 0) {
     return (
@@ -43,7 +68,10 @@ export function AchievementList({
           <AchievementCard
             key={item.id}
             achievement={item}
+            canManage={canManage}
             onClick={() => setSelectedAchievement(item)}
+            onEdit={() => setSelectedAchievement(item)}
+            onDelete={() => handleDelete(item)}
           />
         ))}
       </div>

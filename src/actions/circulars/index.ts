@@ -4,3 +4,4 @@ export { deleteCircularAction } from "./deleteCircularAction";
 export { deleteCircularAttachmentAction } from "./deleteCircularAttachmentAction";
 export { publishCircularAction } from "./publishCircularAction";
 export { submitCircularResponseAction } from "./submitCircularResponseAction";
+export { saveDirectCircularAttachmentsAction } from "./saveDirectCircularAttachmentsAction";

@@ -6,6 +6,7 @@ import { CalendarEventCategoryBadge } from "./CalendarEventCategoryBadge";
 import { CalendarEventStatusBadge } from "./CalendarEventStatusBadge";
 import { CalendarVisibilityBadge } from "./CalendarVisibilityBadge";
 import { CalendarActionButtons } from "./CalendarActionButtons";
+import { CalendarEventImageBanner } from "./CalendarEventImageBanner";
 import { CalendarEventMetaGrid } from "./CalendarEventMetaGrid";
 import type { CalendarEventRow } from "@/lib/calendar/types";
 
@@ -24,6 +25,9 @@ export function CalendarEventDetailCard({
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,var(--action-from,#0b63d6),var(--action-to,#0a2f7a))]"
       />
+
+      <CalendarEventImageBanner imagePath={event.image_path} altText={event.title_ar} />
+
       <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-extrabold text-primary">{event.title_ar}</h1>

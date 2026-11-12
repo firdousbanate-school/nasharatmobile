@@ -4,14 +4,21 @@ import { useLocale, useTranslations } from "next-intl";
 import { Building2Icon, CalendarIcon, AwardIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { AchievementCategoryBadge } from "./AchievementCategoryBadge";
+import { AchievementCardActions } from "./AchievementCardActions";
 import type { SchoolAchievementRow } from "@/lib/achievements/types";
 
 export function AchievementCard({
   achievement,
+  canManage = false,
   onClick,
+  onEdit,
+  onDelete,
 }: {
   achievement: SchoolAchievementRow;
+  canManage?: boolean;
   onClick: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   const locale = useLocale();
   const t = useTranslations("achievements");
@@ -65,12 +72,18 @@ export function AchievementCard({
               <span>{deptName}</span>
             </div>
           ) : (
-            <div />
+            <div className="flex items-center gap-1">
+              <CalendarIcon className="size-3.5" />
+              <span>{formattedDate}</span>
+            </div>
           )}
-          <div className="flex items-center gap-1">
-            <CalendarIcon className="size-3.5" />
-            <span>{formattedDate}</span>
-          </div>
+
+          <AchievementCardActions
+            canManage={canManage}
+            onClick={onClick}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         </div>
       </CardContent>
     </Card>
