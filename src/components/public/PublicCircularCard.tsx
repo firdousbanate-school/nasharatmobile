@@ -39,7 +39,10 @@ export function PublicCircularCard({
         )}
       </div>
 
-      <span className="absolute top-4 end-4 text-[11px] font-medium text-muted-foreground">
+      <span
+        suppressHydrationWarning
+        className="absolute top-4 end-4 text-[11px] font-medium text-muted-foreground"
+      >
         {formatCircularDate(publishedAt, locale)}
       </span>
 

@@ -41,12 +41,16 @@ export function PublicCircularArticle({
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
           <dt className="text-xs font-bold text-muted-foreground">{t("publishedAt")}</dt>
-          <dd className="mt-1 text-sm font-semibold">{formatCircularDate(publishedAt, locale)}</dd>
+          <dd suppressHydrationWarning className="mt-1 text-sm font-semibold">
+            {formatCircularDate(publishedAt, locale)}
+          </dd>
         </div>
         {circular.due_at ? (
           <div>
             <dt className="text-xs font-bold text-muted-foreground">{t("dueDate")}</dt>
-            <dd className="mt-1 text-sm font-semibold">{formatCircularDate(circular.due_at, locale)}</dd>
+            <dd suppressHydrationWarning className="mt-1 text-sm font-semibold">
+              {formatCircularDate(circular.due_at, locale)}
+            </dd>
           </div>
         ) : null}
       </dl>
