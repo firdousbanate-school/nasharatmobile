@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { createSchoolDocumentAction } from "@/actions/documents/createSchoolDocumentAction";
-import { updateSchoolDocumentAction } from "@/actions/documents/updateSchoolDocumentAction";
 import { resolveDocumentErrorMessage } from "@/lib/documents/resolveDocumentErrorMessage";
 import type { SchoolDocumentRow, SchoolDocumentSlug } from "@/lib/documents/types";
+import { submitDocumentDirect } from "./submitDocumentDirect";
+
+const MAX_DOCUMENT_BYTES = 25 * 1024 * 1024;
 
 export function useDocumentFormSubmit({
   slug,
@@ -38,24 +39,23 @@ export function useDocumentFormSubmit({
       return;
     }
 
+    if (file && file.size > MAX_DOCUMENT_BYTES) {
+      const msg = t("fileTooLarge");
+      setErrorMessage(msg);
+      toast.error(msg);
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const formData = new FormData();
-    formData.append("title", title.trim());
-    formData.append("description", description.trim());
-    if (file) {
-      formData.append("file", file);
-    }
-
-    let result;
-    if (existingDoc) {
-      formData.append("id", existingDoc.id);
-      result = await updateSchoolDocumentAction(formData);
-    } else {
-      formData.append("slug", slug);
-      result = await createSchoolDocumentAction(formData);
-    }
+    const result = await submitDocumentDirect({
+      slug,
+      existingDoc,
+      title,
+      description,
+      file,
+    });
 
     setIsSubmitting(false);
 

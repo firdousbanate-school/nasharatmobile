@@ -3,7 +3,7 @@ import { validateStorageUpload } from "@/lib/storage/validateStorageUpload";
 
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 
-const MAX_BYTES = 20 * 1024 * 1024; // 20 MB
+const MAX_BYTES = 25 * 1024 * 1024; // 25 MB
 
 export async function uploadDocumentFile(
   supabase: SupabaseClient,
@@ -15,7 +15,7 @@ export async function uploadDocumentFile(
     allowedMime: ALLOWED_MIME,
     maxBytes: MAX_BYTES,
     invalidFormatMessage: "Invalid file format. Allowed: PDF, JPEG, PNG, WebP",
-    tooLargeMessage: "File exceeds the 20MB limit",
+    tooLargeMessage: "File exceeds the 25MB limit",
     contentMismatchMessage: "File content does not match its declared type",
   });
 

@@ -880,7 +880,7 @@
     "documentDescription": "الوصف (اختياري)",
     "documentDescriptionPlaceholder": "نبذة موجزة عن محتوى المستند وأهدافه...",
     "selectFile": "اختيار الملف",
-    "fileHelp": "الصيغ المدعومة: PDF، PNG، JPG، WebP (الحد الأقصى 20 ميغابايت)",
+    "fileHelp": "الصيغ المدعومة: PDF، PNG، JPG، WebP (الحد الأقصى 25 ميغابايت)",
     "replaceFileHelp": "اترك هذا الحقل فارغاً للاحتفاظ بالملف الحالي، أو اختر ملفاً جديداً لاستبداله.",
     "save": "حفظ",
     "saving": "جاري الحفظ...",
