@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { UnifiedCalendarItem } from "@/lib/calendar/types";
+import { getKuwaitDateParts } from "@/lib/calendar/getKuwaitDateParts";
 import { PublicCalendarTopBar } from "./PublicCalendarTopBar";
 import { PublicCalendarUpcomingList } from "./PublicCalendarUpcomingList";
 import { PublicCalendarMonthGrid } from "./PublicCalendarMonthGrid";
@@ -13,22 +14,25 @@ interface PublicCalendarWidgetProps {
 }
 
 export function PublicCalendarWidget({ items, locale }: PublicCalendarWidgetProps) {
-  const [currentDate, setCurrentDate] = useState(() => new Date());
+  const [currentDate, setCurrentDate] = useState(() => {
+    const { year, month } = getKuwaitDateParts(new Date());
+    return new Date(year, month, 15);
+  });
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedItem, setSelectedItem] = useState<UnifiedCalendarItem | null>(null);
 
   const handlePrevMonth = () => {
-    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
+    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 15));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 15));
   };
 
   const handleToday = () => {
-    const now = new Date();
-    setCurrentDate(now);
-    setSelectedDate(now);
+    const { year, month, day } = getKuwaitDateParts(new Date());
+    setCurrentDate(new Date(year, month, 15));
+    setSelectedDate(new Date(year, month, day));
   };
 
   return (

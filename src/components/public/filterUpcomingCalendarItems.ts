@@ -1,4 +1,5 @@
 import type { UnifiedCalendarItem } from "@/lib/calendar/types";
+import { getKuwaitDateParts } from "@/lib/calendar/getKuwaitDateParts";
 
 export interface FilteredUpcomingResult {
   displayItems: UnifiedCalendarItem[];
@@ -22,11 +23,11 @@ export function filterUpcomingCalendarItems(
   const selectedDay = selectedDate.getDate();
 
   const matched = items.filter((item) => {
-    const d = new Date(item.date);
+    const itemParts = getKuwaitDateParts(item.date);
     return (
-      d.getFullYear() === selectedYear &&
-      d.getMonth() === selectedMonth &&
-      d.getDate() === selectedDay
+      itemParts.year === selectedYear &&
+      itemParts.month === selectedMonth &&
+      itemParts.day === selectedDay
     );
   });
 
