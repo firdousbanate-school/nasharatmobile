@@ -7,7 +7,7 @@ import { resolveLocalizedText } from "@/lib/school/resolveLocalizedText";
 import { parseSchoolNameHierarchy } from "@/lib/school/parseSchoolNameHierarchy";
 import { getSchoolLogoUrl } from "@/lib/school/getSchoolLogoUrl";
 
-/** Centered school logo, primary name, and description inside the public top bar. */
+/** School logo placed directly beside the school name, with optional description below. */
 export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow | null }) {
   const locale = useLocale();
   const t = useTranslations("home");
@@ -19,27 +19,27 @@ export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow |
   const logoUrl = getSchoolLogoUrl(school?.logo_path);
 
   return (
-    <div className="flex min-w-0 items-center justify-center gap-3">
-      {logoUrl && (
-        <Image
-          src={logoUrl}
-          alt={brand}
-          width={48}
-          height={48}
-          unoptimized
-          className="size-11 sm:size-12 shrink-0 rounded-full border border-gold/60 bg-white object-contain p-0.5 shadow-sm"
-        />
-      )}
-      <div className="min-w-0 space-y-0.5 text-center sm:text-start">
+    <div className="flex min-w-0 flex-col items-center gap-1 md:items-start">
+      <div className="flex items-center gap-2.5">
+        {logoUrl && (
+          <Image
+            src={logoUrl}
+            alt={brand}
+            width={40}
+            height={40}
+            unoptimized
+            className="size-9 sm:size-10 shrink-0 rounded-full border border-gold/60 bg-white object-contain p-0.5 shadow-sm"
+          />
+        )}
         <h1 className="truncate text-base font-black tracking-wide sm:text-xl text-sidebar-foreground">
           {brand}
         </h1>
-        {description ? (
-          <p className="line-clamp-2 text-xs font-medium text-sidebar-foreground/80 sm:line-clamp-1 max-w-2xl">
-            {description}
-          </p>
-        ) : null}
       </div>
+      {description ? (
+        <p className="line-clamp-2 max-w-2xl text-center text-xs font-medium text-sidebar-foreground/80 sm:line-clamp-1 md:text-start">
+          {description}
+        </p>
+      ) : null}
     </div>
   );
 }
