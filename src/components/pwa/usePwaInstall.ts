@@ -16,7 +16,11 @@ export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [hasPrompt, setHasPrompt] = useState(false);
   const isIos = useSyncExternalStore(emptySubscribe, detectIosDevice, getServerSnapshotFalse);
-  const isStandalone = useSyncExternalStore(emptySubscribe, isStandaloneMode, getServerSnapshotFalse);
+  const isStandalone = useSyncExternalStore(
+    emptySubscribe,
+    isStandaloneMode,
+    getServerSnapshotFalse,
+  );
   const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 

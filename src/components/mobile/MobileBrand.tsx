@@ -17,7 +17,7 @@ export function MobileBrand({ school }: { school: SchoolRow | null }) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-1.5 md:hidden">
       <SchoolLogoAvatar school={school} className="size-7" iconClassName="size-3.5" />
-      <span className="truncate text-xs font-semibold leading-tight text-sidebar-foreground">
+      <span className="truncate text-xs leading-tight font-semibold text-sidebar-foreground">
         {primaryName || schoolName}
       </span>
     </div>
