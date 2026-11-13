@@ -4,8 +4,10 @@ const m = vi.hoisted(() => ({
   assertCan: vi.fn(),
   parse: vi.fn(),
   assertDocs: vi.fn(),
+  fetchStatus: vi.fn(),
   updateRecord: vi.fn(),
   upload: vi.fn(),
+  notifyHeads: vi.fn(),
   revalidate: vi.fn(),
 }));
 
@@ -21,9 +23,13 @@ vi.mock("@/lib/validation/parseCircularFormData", () => ({ parseCircularFormData
 vi.mock("@/lib/circulars/assertValidCircularDocuments", () => ({
   assertValidCircularDocuments: m.assertDocs,
 }));
+vi.mock("@/lib/circulars/fetchCircularStatus", () => ({ fetchCircularStatus: m.fetchStatus }));
 vi.mock("@/lib/circulars/updateCircularRecord", () => ({ updateCircularRecord: m.updateRecord }));
 vi.mock("@/lib/circulars/handleCircularDocumentsUpload", () => ({
   handleCircularDocumentsUpload: m.upload,
+}));
+vi.mock("@/lib/circulars/notifyDepartmentHeadsOfPublish", () => ({
+  notifyDepartmentHeadsOfPublish: m.notifyHeads,
 }));
 
 import { updateCircularAction } from "./updateCircularAction";
@@ -89,5 +95,29 @@ describe("updateCircularAction", () => {
     expect(res.success).toBe(false);
     expect(m.upload).not.toHaveBeenCalled();
     expect(m.revalidate).not.toHaveBeenCalled();
+  });
+
+  it("notifies department heads when status transitions to published", async () => {
+    m.parse.mockReturnValue({ ...parsed, status: "published" });
+    m.fetchStatus.mockResolvedValue("draft");
+    m.notifyHeads.mockResolvedValue(undefined);
+
+    const res = await updateCircularAction("c-1", form);
+
+    expect(res).toEqual({ success: true });
+    expect(m.notifyHeads).toHaveBeenCalledWith(
+      {},
+      { circularId: "c-1", schoolId: "s-1", publisherId: "p-1" },
+    );
+  });
+
+  it("does not re-notify when circular was already published", async () => {
+    m.parse.mockReturnValue({ ...parsed, status: "published" });
+    m.fetchStatus.mockResolvedValue("published");
+
+    const res = await updateCircularAction("c-1", form);
+
+    expect(res).toEqual({ success: true });
+    expect(m.notifyHeads).not.toHaveBeenCalled();
   });
 });

@@ -7,6 +7,8 @@ import { updateCircularRecord } from "@/lib/circulars/updateCircularRecord";
 import { handleCircularDocumentsUpload } from "@/lib/circulars/handleCircularDocumentsUpload";
 import { assertValidCircularDocuments } from "@/lib/circulars/assertValidCircularDocuments";
 import { assertCanManageCirculars } from "@/lib/circulars/assertCanManageCirculars";
+import { fetchCircularStatus } from "@/lib/circulars/fetchCircularStatus";
+import { notifyIfCircularPublished } from "@/lib/circulars/notifyIfCircularPublished";
 import type { CircularStatus } from "@/lib/circulars/types";
 import { ForbiddenError } from "@/lib/errors/ForbiddenError";
 import { ValidationError } from "@/lib/errors/ValidationError";
@@ -43,6 +45,8 @@ export async function updateCircularAction(
     await assertValidCircularDocuments(formData);
 
     const supabase = await createSupabaseServerClient();
+    const previousStatus = await fetchCircularStatus(supabase, circularId, auth.schoolId);
+
     const res = await updateCircularRecord(supabase, {
       circularId,
       schoolId: auth.schoolId,
@@ -70,6 +74,14 @@ export async function updateCircularAction(
     if (uploadRes.error) {
       throw mapDatabaseError(uploadRes.error, "Failed to upload circular documents");
     }
+
+    await notifyIfCircularPublished(supabase, {
+      circularId,
+      schoolId: auth.schoolId,
+      publisherId: auth.profileId,
+      nextStatus: status,
+      previousStatus,
+    });
 
     revalidatePath("/[locale]/circulars", "page");
     revalidatePath(`/[locale]/circulars/${circularId}`, "page");
