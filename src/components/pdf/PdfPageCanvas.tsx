@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import type { PdfRotation } from "@/lib/pdf/types";
 import { highlightTextLayer } from "./highlightTextLayer";
 import { renderPdfPageLayer } from "./renderPdfPageLayer";
+import { usePageVisibilityObservers } from "./usePageVisibilityObservers";
 
 interface PdfPageCanvasProps {
   pdfDoc: PDFDocumentProxy;
@@ -26,8 +27,20 @@ export function PdfPageCanvas(props: PdfPageCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const textLayerRef = useRef<HTMLDivElement | null>(null);
-  const [isNearViewport, setIsNearViewport] = useState(pageNumber <= 2);
+  const renderQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const searchRef = useRef({ searchQuery, activePageMatchIndex });
   const [dimensions, setDimensions] = useState({ width: 612, height: 792 });
+
+  const isNearViewport = usePageVisibilityObservers(
+    containerRef,
+    scrollRoot,
+    pageNumber,
+    onBecomeVisible,
+  );
+
+  useEffect(() => {
+    searchRef.current = { searchQuery, activePageMatchIndex };
+  }, [searchQuery, activePageMatchIndex]);
 
   useEffect(() => {
     registerPageRef?.(pageNumber, containerRef.current);
@@ -35,48 +48,36 @@ export function PdfPageCanvas(props: PdfPageCanvasProps) {
   }, [pageNumber, registerPageRef]);
 
   useEffect(() => {
-    const node = containerRef.current;
-    if (!node || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          setIsNearViewport(true);
-          if (entry.intersectionRatio >= 0.45) onBecomeVisible?.(pageNumber);
-        }
-      },
-      { root: scrollRoot, rootMargin: "350px 0px", threshold: [0.01, 0.45] },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [onBecomeVisible, pageNumber, scrollRoot]);
-
-  useEffect(() => {
     if (!isNearViewport || !canvasRef.current || !textLayerRef.current) return;
     let cancelled = false;
     let cancelRender: (() => void) | null = null;
+    const canvas = canvasRef.current;
+    const textContainer = textLayerRef.current;
 
-    void renderPdfPageLayer({
-      pdfDoc,
-      pageNumber,
-      scale,
-      rotation,
-      canvas: canvasRef.current,
-      textContainer: textLayerRef.current,
-      searchQuery,
-      activePageMatchIndex,
-      onResize: setDimensions,
-      isCancelled: () => cancelled,
-      onRegisterCancel: (fn) => {
-        cancelRender = fn;
-      },
-    }).catch(() => {});
+    renderQueueRef.current = renderQueueRef.current.then(async () => {
+      if (cancelled) return;
+      await renderPdfPageLayer({
+        pdfDoc,
+        pageNumber,
+        scale,
+        rotation,
+        canvas,
+        textContainer,
+        searchQuery: searchRef.current.searchQuery,
+        activePageMatchIndex: searchRef.current.activePageMatchIndex,
+        onResize: setDimensions,
+        isCancelled: () => cancelled,
+        onRegisterCancel: (fn) => {
+          cancelRender = fn;
+        },
+      }).catch(() => {});
+    });
 
     return () => {
       cancelled = true;
       cancelRender?.();
     };
-  }, [activePageMatchIndex, isNearViewport, pageNumber, pdfDoc, rotation, scale, searchQuery]);
+  }, [isNearViewport, pageNumber, pdfDoc, rotation, scale]);
 
   useEffect(() => {
     if (textLayerRef.current) {

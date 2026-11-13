@@ -43,6 +43,7 @@ export function SchoolDocumentPreviewContent({
 
   return (
     <InAppPdfViewer
+      key={fileUrl}
       url={fileUrl}
       title={currentDoc.title}
       fileName={currentDoc.file_name}
