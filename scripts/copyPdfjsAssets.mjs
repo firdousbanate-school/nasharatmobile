@@ -23,5 +23,10 @@ cpSync(path.join(pdfjsRoot, "cmaps"), path.join(targetRoot, "cmaps"), {
 cpSync(path.join(pdfjsRoot, "standard_fonts"), path.join(targetRoot, "standard_fonts"), {
   recursive: true,
 });
+cpSync(path.join(pdfjsRoot, "wasm"), path.join(targetRoot, "wasm"), {
+  recursive: true,
+});
 
-console.log("[copyPdfjsAssets] Copied PDF.js worker, cmaps, and standard_fonts to public/pdfjs.");
+console.log(
+  "[copyPdfjsAssets] Copied PDF.js worker, cmaps, standard_fonts, and wasm to public/pdfjs.",
+);

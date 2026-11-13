@@ -46,6 +46,7 @@ export async function fetchPdfDocument({
     cMapUrl: "/pdfjs/cmaps/",
     cMapPacked: true,
     standardFontDataUrl: "/pdfjs/standard_fonts/",
+    wasmUrl: "/pdfjs/wasm/",
   });
 
   if (signal.aborted) {

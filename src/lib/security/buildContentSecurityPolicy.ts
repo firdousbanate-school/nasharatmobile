@@ -40,6 +40,7 @@ export function buildContentSecurityPolicy(
     "'self'",
     `'nonce-${nonce}'`,
     "'strict-dynamic'",
+    "'wasm-unsafe-eval'",
     "'sha256-L7SQsgfZu9ByG5TYbUD49YB6pVJsb0eYrUBcuaszKWs='",
     isDev ? "'unsafe-eval'" : "",
   ]
@@ -49,6 +50,7 @@ export function buildContentSecurityPolicy(
   const directives = [
     "default-src 'self'",
     `script-src ${scriptDirectives}`,
+    "worker-src 'self'",
     "style-src 'self' 'unsafe-inline'",
     `img-src ${imageSources}`,
     "font-src 'self' data:",
