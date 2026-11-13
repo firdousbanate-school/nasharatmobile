@@ -58,8 +58,15 @@ describe("PublicTopBar", () => {
     );
 
     expect(screen.getByText("مدرسة الفردوس الابتدائية")).toBeInTheDocument();
-    expect(screen.getByText("وصف عام")).toBeInTheDocument();
-    expect(screen.getByTestId("kuwait-moe")).toBeInTheDocument();
+    const description = screen.getByText("وصف عام");
+    expect(description).toBeInTheDocument();
+    expect(description.className).toContain("hidden");
+    expect(description.className).toContain("md:block");
+    const kuwaitMoe = screen.getByTestId("kuwait-moe");
+    expect(kuwaitMoe).toBeInTheDocument();
+    expect(kuwaitMoe.parentElement?.className).toContain("flex-row");
+    expect(kuwaitMoe.parentElement?.className).toContain("justify-between");
+    expect(kuwaitMoe.parentElement?.className).toContain("md:flex-col");
     expect(screen.getByTestId("instagram-link")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /دخول منصة المدرسة/ })).toBeInTheDocument();
   });
