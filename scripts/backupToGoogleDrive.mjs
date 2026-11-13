@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
@@ -60,7 +61,47 @@ function loadGoogleTokenData() {
   throw new Error("No Google Drive authentication token found.");
 }
 
+async function getServiceAccountAccessToken(tokenData) {
+  const now = Math.floor(Date.now() / 1000);
+  const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
+  const claim = Buffer.from(
+    JSON.stringify({
+      iss: tokenData.client_email,
+      scope: "https://www.googleapis.com/auth/drive",
+      aud: tokenData.token_uri || "https://oauth2.googleapis.com/token",
+      exp: now + 3600,
+      iat: now,
+    }),
+  ).toString("base64url");
+
+  const signature = crypto
+    .createSign("RSA-SHA256")
+    .update(`${header}.${claim}`)
+    .sign(tokenData.private_key, "base64url");
+
+  const params = new URLSearchParams({
+    grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+    assertion: `${header}.${claim}.${signature}`,
+  });
+
+  const res = await fetch(tokenData.token_uri || "https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+
+  const data = await res.json();
+  if (!data.access_token) {
+    throw new Error(`Failed to get service account token: ${JSON.stringify(data)}`);
+  }
+  return data.access_token;
+}
+
 async function getFreshAccessToken(tokenData) {
+  if (tokenData.type === "service_account") {
+    return getServiceAccountAccessToken(tokenData);
+  }
+
   const refreshToken = tokenData.token?.refresh_token || tokenData.refresh_token;
   const clientId = tokenData.client_id;
   const clientSecret = tokenData.client_secret;
