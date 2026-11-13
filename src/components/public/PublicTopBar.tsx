@@ -41,22 +41,24 @@ export function PublicTopBar({
         <div
           className={
             isArabic
-              ? "flex w-full shrink-0 items-center justify-between gap-2.5 md:w-auto md:justify-end"
+              ? "relative flex w-full shrink-0 items-center justify-center gap-2.5 md:w-auto md:justify-end"
               : "flex shrink-0 items-center justify-center gap-2.5 md:justify-end"
           }
         >
-          <div className={isArabic ? "order-last md:order-none" : ""}>
+          <div
+            className={
+              isArabic ? "absolute end-0 top-1/2 -translate-y-1/2 md:static md:translate-y-0" : ""
+            }
+          >
             <PublicInstagramLink url={school?.instagram_url} />
           </div>
-          <div className="flex items-center gap-2.5">
-            <PublicTopBarLoginButton />
-            {isOwner ? (
-              <>
-                <LanguageSwitcher />
-                <ThemeToggle />
-              </>
-            ) : null}
-          </div>
+          <PublicTopBarLoginButton />
+          {isOwner ? (
+            <>
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </>
+          ) : null}
         </div>
       </div>
 
