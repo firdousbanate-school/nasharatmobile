@@ -7,6 +7,10 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+vi.mock("@/lib/pdf/fetchPdfDocument", () => ({
+  fetchPdfDocument: () => new Promise(() => {}),
+}));
+
 const basePdfDoc: SchoolDocumentRow = {
   id: "doc-1",
   school_id: "school-1",
@@ -25,16 +29,12 @@ const basePdfDoc: SchoolDocumentRow = {
 };
 
 describe("SchoolDocumentPreviewContent", () => {
-  it("renders mobile open action and desktop iframe for PDF documents", () => {
-    render(<SchoolDocumentPreviewContent currentDoc={basePdfDoc} />);
+  it("renders the universal in-app PDF viewer without iframes or target=_blank links", () => {
+    const { container } = render(<SchoolDocumentPreviewContent currentDoc={basePdfDoc} />);
 
-    const openLink = screen.getByRole("link", { name: "openInNewTab" });
-    expect(openLink).toHaveAttribute("href", "/api/documents/doc-1/preview");
-    expect(openLink).toHaveAttribute("target", "_blank");
-
-    const iframe = screen.getByTitle("Operational Plan");
-    expect(iframe).toHaveAttribute("src", "/api/documents/doc-1/preview");
-    expect(iframe.className).toContain("hidden");
-    expect(iframe.className).toContain("md:block");
+    expect(screen.getByLabelText("Operational Plan")).toBeInTheDocument();
+    expect(screen.getByRole("toolbar")).toBeInTheDocument();
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(container.querySelector('a[target="_blank"]')).toBeNull();
   });
 });
