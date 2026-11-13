@@ -40,4 +40,13 @@ describe("buildContentSecurityPolicy", () => {
     });
     expect(headerValue).toContain("https://errors.example.com");
   });
+
+  it("allows vercel.live framing only on Vercel preview deployments", () => {
+    const preview = buildContentSecurityPolicy("test-nonce", { isPreview: true });
+    expect(preview.headerValue).toContain("frame-src 'self' https://vercel.live");
+
+    const prod = buildContentSecurityPolicy("test-nonce", { isPreview: false });
+    expect(prod.headerValue).toContain("frame-src 'self'");
+    expect(prod.headerValue).not.toContain("https://vercel.live");
+  });
 });

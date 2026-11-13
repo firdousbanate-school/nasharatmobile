@@ -1,14 +1,8 @@
-import { resolveSafeOrigin } from "./resolveSafeOrigin";
+import { resolveCspOptions, type CspOptions } from "./resolveCspOptions";
 
 export interface ContentSecurityPolicyResult {
   nonce: string;
   headerValue: string;
-}
-
-interface CspOptions {
-  isDev?: boolean;
-  supabaseUrl?: string;
-  errorReportingUrl?: string;
 }
 
 /**
@@ -20,14 +14,7 @@ export function buildContentSecurityPolicy(
   options?: CspOptions,
 ): ContentSecurityPolicyResult {
   const nonce = customNonce || Buffer.from(crypto.randomUUID()).toString("base64");
-  const isDev = options?.isDev ?? process.env.NODE_ENV === "development";
-
-  const supabaseOrigin = resolveSafeOrigin(
-    options?.supabaseUrl ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
-  );
-  const errorReportingOrigin = resolveSafeOrigin(
-    options?.errorReportingUrl ?? process.env.ERROR_REPORTING_URL,
-  );
+  const { isDev, isPreview, supabaseOrigin, errorReportingOrigin } = resolveCspOptions(options);
 
   const connectSources = Array.from(
     new Set(
@@ -69,6 +56,7 @@ export function buildContentSecurityPolicy(
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    `frame-src 'self'${isPreview ? " https://vercel.live" : ""}`,
     "frame-ancestors 'none'",
     ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ];
