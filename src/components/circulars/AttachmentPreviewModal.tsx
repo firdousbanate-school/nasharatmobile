@@ -81,6 +81,7 @@ export function AttachmentPreviewModal({
           />
         ) : (
           <InAppPdfViewer
+            key={publicUrl}
             url={publicUrl}
             title={fileName}
             fileName={fileName}

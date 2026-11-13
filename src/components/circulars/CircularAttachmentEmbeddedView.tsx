@@ -46,6 +46,7 @@ export function CircularAttachmentEmbeddedView({
 
   return (
     <InAppPdfViewer
+      key={publicUrl}
       url={publicUrl}
       title={fileName}
       fileName={fileName}
