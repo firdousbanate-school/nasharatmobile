@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { XIcon, DownloadIcon, PrinterIcon } from "lucide-react";
+import { InAppPdfViewer } from "@/components/pdf";
 import { Button } from "@/components/ui/button";
 import { useDrawerEscape } from "@/components/layout/useDrawerEscape";
 import { printAttachment } from "@/lib/circulars/printAttachment";
@@ -76,13 +77,14 @@ export function AttachmentPreviewModal({
             width={1200}
             height={800}
             unoptimized
-            className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+            className="max-h-[80dvh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
           />
         ) : (
-          <iframe
-            src={publicUrl}
+          <InAppPdfViewer
+            url={publicUrl}
             title={fileName}
-            className="h-[80vh] w-full max-w-5xl rounded-lg border border-border bg-background shadow-2xl"
+            fileName={fileName}
+            className="h-[80dvh] w-full max-w-5xl bg-background shadow-2xl"
           />
         )}
       </div>
