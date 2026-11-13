@@ -23,6 +23,7 @@ for (const path of ["/", "/en", "/login", "/en/login"]) {
 
 test.describe.serial("signed-in phone shell", () => {
   let fx: E2eFixture;
+  let cookies: Awaited<ReturnType<ReturnType<Page["context"]>["cookies"]>> = [];
 
   test.beforeAll(async () => {
     fx = await seedE2eFixture();
@@ -34,12 +35,14 @@ test.describe.serial("signed-in phone shell", () => {
 
   test("shows the bottom tab bar and hides the sidebar", async ({ page }) => {
     await loginAs(page, fx.admin);
+    cookies = await page.context().cookies();
     await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
     await expect(page.locator("aside")).toBeHidden();
   });
 
   test("More opens a sheet and Escape closes it", async ({ page }) => {
-    await loginAs(page, fx.admin);
+    await page.context().addCookies(cookies);
+    await page.goto("/en/dashboard");
     await page
       .getByRole("navigation", { name: "Main navigation" })
       .getByRole("button", { name: "More" })
@@ -50,7 +53,7 @@ test.describe.serial("signed-in phone shell", () => {
   });
 
   test("main screens have no horizontal overflow and stay short", async ({ page }) => {
-    await loginAs(page, fx.admin);
+    await page.context().addCookies(cookies);
     for (const path of [
       "/en/dashboard",
       "/en/circulars",
