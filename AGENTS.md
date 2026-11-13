@@ -384,7 +384,7 @@ Never confuse an incomplete investigation with a completed task.
 
 ## RULE #16: GIT & BRANCH SAFETY
 
-1. Never work on, commit to, or push to `main`/`master`. Work on a feature branch and let the owner merge through a Pull Request.
+1. Work on feature branches when appropriate, and once verification passes, merge into `main` and push directly to `origin/main` so changes deploy automatically without manual Pull Request merges on GitHub.
 2. Run `git status` first. If there are uncommitted changes you did not make, stop and ask; never stash or discard them.
 3. Make small, logical commits, each after its verification passes.
 4. Forbidden without explicit written approval in the current conversation: `git push --force`, `git reset --hard`, `git clean`, `git rebase` of shared branches, deleting branches or tags, rewriting pushed history, mass find-and-replace across the repository.
