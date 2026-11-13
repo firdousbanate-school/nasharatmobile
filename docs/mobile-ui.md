@@ -42,6 +42,9 @@ desktop; the layout adapts with CSS. Desktop (`md` and up) is unchanged.
   and the three data tables (department compliance, circulars, maintenance) become labelled cards
   (`DepartmentComplianceCard`, `CircularReportCard` with a "who responded" expander, `MaintenanceReportCard`)
   with "Show more"; the original tables are unchanged from `md` up.
+- Document & attachment PDF previews: rendered uniformly in-app via `InAppPdfViewer`
+  (`src/components/pdf/`) with self-hosted PDF.js worker/cmaps/wasm assets, touch-friendly >=44px
+  toolbar controls, and zero `<iframe>` or external-tab fallbacks.
 
 ## Adding a new page
 

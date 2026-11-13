@@ -406,6 +406,27 @@ The app is installed as a PWA and must work well on phones. Phones are viewports
 
 ---
 
+## RULE #18: UNIVERSAL IN-APP PDF PREVIEW ARCHITECTURE (REUSABLE BLUEPRINT)
+
+Use this proven architecture whenever implementing PDF previews in this repository or any Next.js/React application:
+
+1. **Never use `<iframe>`, `<embed>`, `<object>`, `target="_blank"`, or `window.open()` for PDF previews.** Mobile browsers (Android Chrome) block PDFs inside iframes, iOS Safari shows only page 1 statically, and external tabs break PWA navigation.
+2. **Use `pdfjs-dist` loaded dynamically on the client only** (`await import("pdfjs-dist")` inside a browser-only loader) so SSR/Next.js builds never fail on browser globals (`DOMMatrix`).
+3. **Self-host all PDF.js static assets under `public/pdfjs/`** via a `postinstall` script (`scripts/copyPdfjsAssets.mjs`) and configure every required URL in `getDocument(...)`:
+   - `GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs"`
+   - `cMapUrl: "/pdfjs/cmaps/"`, `cMapPacked: true` (Arabic, RTL, and Unicode/CJK text)
+   - `standardFontDataUrl: "/pdfjs/standard_fonts/"`
+   - `wasmUrl: "/pdfjs/wasm/"` (mandatory in `pdfjs-dist` v6+ for JBIG2/OpenJPEG/QCMS scanned PDFs; omitting `wasmUrl` causes `JBig2 failed to initialize` and blank pages)
+4. **Configure strict CSP compatibility:** Include `worker-src 'self'` and `'wasm-unsafe-eval'` in `script-src` (in `buildContentSecurityPolicy.ts`) so the same-origin worker and WASM decoders run without `unsafe-eval` or `blob:`.
+5. **Preserve authentication and handle errors explicitly:** Fetch protected PDFs with `fetch(url, { credentials: "same-origin", signal })` and streaming progress (`ReadableStream`), classify `401` (expired session), `403` (forbidden), `404` (not found), `InvalidPDFException` (corrupted), and `network` errors with a Retry action, and release resources on unmount (`document.cleanup()` + `loadingTask.destroy()` + `AbortController`).
+6. **Prevent mobile blank canvases and wrong initial page numbers:**
+   - Serialize `page.render({ canvas })` calls per canvas via a promise queue (`renderQueueRef`) so `fitWidth` scale recalculations never collide with an in-flight render.
+   - Separate the lazy-render `IntersectionObserver` (`rootMargin: "350px 0px"`, `threshold: 0.01`) from the active-page `IntersectionObserver` (`rootMargin: "0px"`, `threshold: 0.55`) so page 2 is not marked active on initial mobile load.
+   - Pass `key={fileUrl}` on `<InAppPdfViewer />` when switching between documents so scroll position, `currentPage`, and canvas dimensions reset cleanly.
+7. **Full viewer capabilities:** Include `TextLayer` + `.textLayer` CSS for text selection/copying and in-document search, zoom/fit-width/fit-page, rotation, thumbnails, keyboard navigation, fullscreen with CSS `fixed inset-0 h-dvh` fallback, and in-app hidden-iframe PNG printing (`printPdfDocument`).
+
+---
+
 ## FINAL NON-NEGOTIABLE ENGINEERING PRINCIPLE
 
 **An honest incomplete task is always better than a fabricated completed task.**
