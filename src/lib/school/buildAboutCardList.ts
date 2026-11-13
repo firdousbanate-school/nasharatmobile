@@ -43,28 +43,16 @@ export function buildAboutCardList(
     });
   }
 
-  const manager = resolveLocalizedText(locale, school.manager_name_ar, school.manager_name_en);
-  const assistant1 = resolveLocalizedText(
-    locale,
-    school.assistant_manager_ar,
-    school.assistant_manager_en,
-  );
-  const assistant2 = resolveLocalizedText(
-    locale,
-    school.assistant_manager_2_ar,
-    school.assistant_manager_2_en,
-  );
-
-  const leadershipLines: string[] = [];
-  if (manager) {
-    leadershipLines.push(`${t("managerTitle")}: ${manager}`);
-  }
-  if (assistant1) {
-    leadershipLines.push(`${t("assistantManager1Title")}: ${assistant1}`);
-  }
-  if (assistant2) {
-    leadershipLines.push(`${t("assistantManager2Title")}: ${assistant2}`);
-  }
+  const leadershipEntries: Array<[string, string | null | undefined, string | null | undefined]> = [
+    ["managerTitle", school.manager_name_ar, school.manager_name_en],
+    ["assistantManager1Title", school.assistant_manager_ar, school.assistant_manager_en],
+    ["assistantManager2Title", school.assistant_manager_2_ar, school.assistant_manager_2_en],
+    ["assistantManager3Title", school.assistant_manager_3_ar, school.assistant_manager_3_en],
+  ];
+  const leadershipLines = leadershipEntries.flatMap(([key, ar, en]) => {
+    const name = resolveLocalizedText(locale, ar, en);
+    return name ? [`${t(key)}: ${name}`] : [];
+  });
 
   if (leadershipLines.length > 0) {
     items.push({

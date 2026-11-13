@@ -16,6 +16,8 @@ describe("buildAboutCardList", () => {
     assistant_manager_en: "Mona Al-Mutairi",
     assistant_manager_2_ar: "خزنه الشمري",
     assistant_manager_2_en: "Khazna Al-Shammari",
+    assistant_manager_3_ar: "نورة الفهد",
+    assistant_manager_3_en: "Noura Al-Fahad",
     vision_ar: "رؤية المدرسة",
     vision_en: "School vision",
     mission_ar: "رسالة المدرسة",
@@ -34,6 +36,7 @@ describe("buildAboutCardList", () => {
       managerTitle: "Principal",
       assistantManager1Title: "Assistant Principal 1",
       assistantManager2Title: "Assistant Principal 2",
+      assistantManager3Title: "Assistant Principal 3",
     };
     return map[key] ?? key;
   };
@@ -57,6 +60,7 @@ describe("buildAboutCardList", () => {
     expect(leadershipCard?.content).toContain("Principal: سلوى العنزي");
     expect(leadershipCard?.content).toContain("Assistant Principal 1: منى المطيري");
     expect(leadershipCard?.content).toContain("Assistant Principal 2: خزنه الشمري");
+    expect(leadershipCard?.content).toContain("Assistant Principal 3: نورة الفهد");
   });
 
   it("builds leadership card in English", () => {
@@ -65,5 +69,6 @@ describe("buildAboutCardList", () => {
     expect(leadershipCard?.content).toContain("Principal: Salwa Al-Enezi");
     expect(leadershipCard?.content).toContain("Assistant Principal 1: Mona Al-Mutairi");
     expect(leadershipCard?.content).toContain("Assistant Principal 2: Khazna Al-Shammari");
+    expect(leadershipCard?.content).toContain("Assistant Principal 3: Noura Al-Fahad");
   });
 });

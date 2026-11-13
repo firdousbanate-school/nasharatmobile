@@ -13,6 +13,8 @@ export function parseSchoolFormData(formData: FormData) {
     assistantManagerEn: cleanFormField(formData.get("assistant_manager_en")),
     assistantManager2Ar: cleanFormField(formData.get("assistant_manager_2_ar")),
     assistantManager2En: cleanFormField(formData.get("assistant_manager_2_en")),
+    assistantManager3Ar: cleanFormField(formData.get("assistant_manager_3_ar")),
+    assistantManager3En: cleanFormField(formData.get("assistant_manager_3_en")),
     addressAr: cleanFormField(formData.get("address_ar")),
     addressEn: cleanFormField(formData.get("address_en")),
     academicYear: cleanFormField(formData.get("academic_year")),

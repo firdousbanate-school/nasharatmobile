@@ -53,23 +53,56 @@ export function SchoolLeadershipFields({
           disabled={!canManage}
         />
       </div>
+      <LeadershipPair
+        arId="assistant_manager_2_ar"
+        enId="assistant_manager_2_en"
+        arLabel={t("assistantManager2Ar")}
+        enLabel={t("assistantManager2En")}
+        arDefault={school.assistant_manager_2_ar ?? ""}
+        enDefault={school.assistant_manager_2_en ?? ""}
+        disabled={!canManage}
+      />
+      <LeadershipPair
+        arId="assistant_manager_3_ar"
+        enId="assistant_manager_3_en"
+        arLabel={t("assistantManager3Ar")}
+        enLabel={t("assistantManager3En")}
+        arDefault={school.assistant_manager_3_ar ?? ""}
+        enDefault={school.assistant_manager_3_en ?? ""}
+        disabled={!canManage}
+      />
+    </>
+  );
+}
+
+interface LeadershipPairProps {
+  arId: string;
+  enId: string;
+  arLabel: string;
+  enLabel: string;
+  arDefault: string;
+  enDefault: string;
+  disabled: boolean;
+}
+
+function LeadershipPair({
+  arId,
+  enId,
+  arLabel,
+  enLabel,
+  arDefault,
+  enDefault,
+  disabled,
+}: LeadershipPairProps) {
+  return (
+    <>
       <div className="space-y-2">
-        <Label htmlFor="assistant_manager_2_ar">{t("assistantManager2Ar")}</Label>
-        <Input
-          id="assistant_manager_2_ar"
-          name="assistant_manager_2_ar"
-          defaultValue={school.assistant_manager_2_ar ?? ""}
-          disabled={!canManage}
-        />
+        <Label htmlFor={arId}>{arLabel}</Label>
+        <Input id={arId} name={arId} defaultValue={arDefault} disabled={disabled} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="assistant_manager_2_en">{t("assistantManager2En")}</Label>
-        <Input
-          id="assistant_manager_2_en"
-          name="assistant_manager_2_en"
-          defaultValue={school.assistant_manager_2_en ?? ""}
-          disabled={!canManage}
-        />
+        <Label htmlFor={enId}>{enLabel}</Label>
+        <Input id={enId} name={enId} defaultValue={enDefault} disabled={disabled} />
       </div>
     </>
   );

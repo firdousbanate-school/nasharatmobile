@@ -18,6 +18,8 @@ export type SchoolRow = {
   assistant_manager_en?: string | null;
   assistant_manager_2_ar?: string | null;
   assistant_manager_2_en?: string | null;
+  assistant_manager_3_ar?: string | null;
+  assistant_manager_3_en?: string | null;
   address_ar?: string | null;
   address_en?: string | null;
   academic_year?: string | null;
@@ -25,7 +27,7 @@ export type SchoolRow = {
 };
 
 const SCHOOL_FIELDS =
-  "id, name_ar, name_en, slug, timezone, logo_path, is_active, phone, email, manager_name_ar, manager_name_en, assistant_manager_ar, assistant_manager_en, assistant_manager_2_ar, assistant_manager_2_en, address_ar, address_en, updated_at";
+  "id, name_ar, name_en, slug, timezone, logo_path, is_active, phone, email, manager_name_ar, manager_name_en, assistant_manager_ar, assistant_manager_en, assistant_manager_2_ar, assistant_manager_2_en, assistant_manager_3_ar, assistant_manager_3_en, address_ar, address_en, updated_at";
 
 export async function getCurrentSchool(schoolId?: string | null): Promise<SchoolRow | null> {
   const supabase = await createSupabaseServerClient();

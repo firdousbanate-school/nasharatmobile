@@ -19,6 +19,8 @@ export async function persistSchoolProfile(
     assistant_manager_en: parsed.assistantManagerEn,
     assistant_manager_2_ar: parsed.assistantManager2Ar,
     assistant_manager_2_en: parsed.assistantManager2En,
+    assistant_manager_3_ar: parsed.assistantManager3Ar,
+    assistant_manager_3_en: parsed.assistantManager3En,
     address_ar: parsed.addressAr,
     address_en: parsed.addressEn,
     updated_at: now,

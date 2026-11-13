@@ -19,6 +19,8 @@ describe("parseSchoolFormData", () => {
     expect(parsed.assistantManagerEn).toBeNull();
     expect(parsed.assistantManager2Ar).toBeNull();
     expect(parsed.assistantManager2En).toBeNull();
+    expect(parsed.assistantManager3Ar).toBeNull();
+    expect(parsed.assistantManager3En).toBeNull();
     expect(parsed.addressAr).toBeNull();
     expect(parsed.addressEn).toBeNull();
     expect(parsed.academicYear).toBeNull();
@@ -45,6 +47,8 @@ describe("parseSchoolFormData", () => {
     formData.append("assistant_manager_en", "Mr. Khaled Al-Harbi");
     formData.append("assistant_manager_2_ar", "أ. سارة السالم");
     formData.append("assistant_manager_2_en", "Ms. Sarah Al-Salem");
+    formData.append("assistant_manager_3_ar", "أ. نورة الفهد");
+    formData.append("assistant_manager_3_en", "Ms. Noura Al-Fahad");
     formData.append("address_ar", "الرياض، حي النرجس");
     formData.append("address_en", "Riyadh, Al-Narjis District");
     formData.append("academic_year", "2026/2027");
@@ -72,6 +76,8 @@ describe("parseSchoolFormData", () => {
     expect(parsed.assistantManagerEn).toBe("Mr. Khaled Al-Harbi");
     expect(parsed.assistantManager2Ar).toBe("أ. سارة السالم");
     expect(parsed.assistantManager2En).toBe("Ms. Sarah Al-Salem");
+    expect(parsed.assistantManager3Ar).toBe("أ. نورة الفهد");
+    expect(parsed.assistantManager3En).toBe("Ms. Noura Al-Fahad");
     expect(parsed.addressAr).toBe("الرياض، حي النرجس");
     expect(parsed.addressEn).toBe("Riyadh, Al-Narjis District");
     expect(parsed.academicYear).toBe("2026/2027");

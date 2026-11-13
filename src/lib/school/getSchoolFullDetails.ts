@@ -6,6 +6,9 @@ import { mergeSchoolSettings, type SchoolSettingsRow } from "./mergeSchoolSettin
 export type SchoolFullDetails = SchoolRow & SchoolSettingsRow;
 
 const SCHOOL_FIELDS =
+  "id, name_ar, name_en, slug, timezone, logo_path, is_active, phone, email, manager_name_ar, manager_name_en, assistant_manager_ar, assistant_manager_en, assistant_manager_2_ar, assistant_manager_2_en, assistant_manager_3_ar, assistant_manager_3_en, address_ar, address_en, updated_at";
+
+const FALLBACK_SCHOOL_FIELDS =
   "id, name_ar, name_en, slug, timezone, logo_path, is_active, phone, email, manager_name_ar, manager_name_en, assistant_manager_ar, assistant_manager_en, assistant_manager_2_ar, assistant_manager_2_en, address_ar, address_en, updated_at";
 
 export async function getSchoolFullDetails(
@@ -28,9 +31,25 @@ export async function getSchoolFullDetails(
   }
   if (!resolvedId) return null;
 
+  const fetchSchoolById = async () => {
+    const primary = await supabase
+      .from("schools")
+      .select(SCHOOL_FIELDS)
+      .eq("id", resolvedId)
+      .maybeSingle();
+    if (!primary.error) {
+      return primary;
+    }
+    return supabase
+      .from("schools")
+      .select(FALLBACK_SCHOOL_FIELDS)
+      .eq("id", resolvedId)
+      .maybeSingle();
+  };
+
   const [{ data: school, error: schoolError }, { data: settings, error: settingsError }] =
     await Promise.all([
-      supabase.from("schools").select(SCHOOL_FIELDS).eq("id", resolvedId).maybeSingle(),
+      fetchSchoolById(),
       supabase
         .from("school_settings")
         .select(
