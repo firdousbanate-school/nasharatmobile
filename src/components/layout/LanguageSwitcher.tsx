@@ -11,7 +11,7 @@ export function LanguageSwitcher() {
   const t = useTranslations("common");
 
   const targetLocale = locale === "ar" ? "en" : "ar";
-  const targetLabel = locale === "ar" ? "English" : "العربية";
+  const targetLabel = locale === "ar" ? "EN" : "AR";
 
   const handleToggle = () => {
     router.replace(pathname, { locale: targetLocale });
@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
       variant="outline"
       size="sm"
       onClick={handleToggle}
-      className="text-xs font-medium"
+      className="h-8 px-2 text-[11px] font-medium sm:px-3 sm:text-xs"
       aria-label={`${t("language")}: ${targetLabel}`}
     >
       {targetLabel}

@@ -105,7 +105,10 @@
     "saveNewPassword": "Save New Password",
     "passwordResetSuccess": "Your password has been reset successfully. You can now sign in.",
     "passwordsDoNotMatch": "Passwords do not match.",
-    "passwordTooShort": "Password must be at least 6 characters long."
+    "passwordTooShort": "Password must be at least 6 characters long.",
+    "resetError": "Could not reset password. Please check your input or try again.",
+    "resetLinkInvalid": "This password reset link is invalid or has expired. Please request a new one.",
+    "requestNewResetLink": "Request new reset link"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -858,16 +861,16 @@
   "backup": {
     "title": "Database Backup & Restore",
     "subtitle": "Securely export and restore database records in JSON format",
-    "exportCardTitle": "Export Database Backup",
-    "exportCardDesc": "Download a full JSON backup file containing your school's configuration, departments, locations, users, circulars, maintenance tickets, calendar events, and achievements.",
-    "exportButton": "Download JSON Backup",
+    "exportCardTitle": "Export Complete System Backup (.ZIP)",
+    "exportCardDesc": "Download a complete ZIP archive containing all database records (JSON) and all uploaded storage files (PDFs, images, documents).",
+    "exportButton": "Download ZIP Backup",
     "exporting": "Generating Backup...",
     "exportSuccess": "Backup exported successfully",
-    "restoreCardTitle": "Restore Database from JSON",
-    "restoreCardDesc": "Upload a previously exported JSON backup file to restore records. Data is safely merged and updated based on unique record identifiers.",
-    "selectFile": "Select JSON File",
-    "dropFileHere": "Drop your backup JSON file here, or click to browse",
-    "invalidFile": "Please select a valid JSON backup file",
+    "restoreCardTitle": "Restore System Backup (.ZIP or .JSON)",
+    "restoreCardDesc": "Upload a backup ZIP archive (or standalone JSON) to restore database records and all storage files. Data is safely merged and updated based on unique identifiers.",
+    "selectFile": "Select Backup File (.zip or .json)",
+    "dropFileHere": "Drop your backup file (.zip or .json) here, or click to browse",
+    "invalidFile": "Please select a valid .zip or .json backup file",
     "confirmTitle": "Confirm Database Restore",
     "confirmWarning": "Restoring will update existing records and insert missing records from the backup file. This operation should only be performed with verified backup files.",
     "restoreButton": "Proceed with Restore",
@@ -895,8 +898,10 @@
     "diffOverwritten": "Overwritten records",
     "diffUntouched": "Untouched records",
     "restoreNeverDeletes": "Restore only inserts or updates records. It never deletes a record that is missing from the file.",
-    "notDisasterRecovery": "This JSON file is a per-school configuration export, not a disaster-recovery backup. For full recovery, use `supabase db dump` as described in the runbook.",
-    "restoreSuccessWithSnapshot": "Database restored: {count} records across {tables} tables. Pre-restore snapshot: {id}"
+    "notDisasterRecovery": "This complete ZIP archive packages all database tables and all physical storage files.",
+    "restoreSuccessWithSnapshot": "Database restored: {count} records across {tables} tables. Pre-restore snapshot: {id}",
+    "storageFilesIncluded": "{count} storage files included",
+    "restoreSuccessWithStorage": "Restore completed: {count} records across {tables} tables and {files} storage files restored. Pre-restore snapshot: {id}"
   },
   "documents": {
     "title": "School Guides & Documents",

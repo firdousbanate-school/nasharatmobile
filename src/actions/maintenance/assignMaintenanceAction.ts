@@ -47,7 +47,7 @@ export async function assignMaintenanceAction(formData: FormData): Promise<Actio
     }
 
     if (operatorId && operatorId !== ticket.assigned_operator_id) {
-      void dispatchModuleNotification({
+      await dispatchModuleNotification({
         recipientUserIds: [operatorId],
         schoolId: auth.schoolId,
         type: "maintenance",

@@ -24,7 +24,7 @@ export function ThemeToggle() {
       <button
         type="button"
         aria-label={t("selectTheme")}
-        className="size-9 rounded-md border border-border bg-background"
+        className="size-8 rounded-md border border-border bg-background sm:size-9"
       />
     );
   }
@@ -36,7 +36,7 @@ export function ThemeToggle() {
       <DropdownMenuTrigger
         type="button"
         aria-label={t("selectTheme")}
-        className="flex size-9 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-accent focus:outline-hidden"
+        className="flex size-8 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-accent focus:outline-hidden sm:size-9"
       >
         <PaletteIcon className="size-4" />
       </DropdownMenuTrigger>

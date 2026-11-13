@@ -13,6 +13,7 @@ export function RestoreConfirmDialog({
   isRestoring,
   isPreviewing,
   payload,
+  storageFilesCount,
   diff,
   onClose,
   onConfirm,
@@ -21,6 +22,7 @@ export function RestoreConfirmDialog({
   isRestoring: boolean;
   isPreviewing: boolean;
   payload: DatabaseBackupPayload | null;
+  storageFilesCount?: number;
   diff: RestoreDiff | null;
   onClose: () => void;
   onConfirm: () => void;
@@ -47,7 +49,7 @@ export function RestoreConfirmDialog({
       >
         <RestoreConfirmHeader payload={payload} isRestoring={busy} onClose={onClose} />
 
-        <RestoreMetadataSummary payload={payload} />
+        <RestoreMetadataSummary payload={payload} storageFilesCount={storageFilesCount} />
         <RestoreDiffSummary diff={diff} isPreviewing={isPreviewing} />
 
         <p className="mt-3 flex items-start gap-2 rounded-xl bg-muted/40 p-3 text-[11px] leading-relaxed text-muted-foreground">

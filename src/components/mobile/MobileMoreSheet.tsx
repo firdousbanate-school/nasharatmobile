@@ -74,7 +74,7 @@ export function MobileMoreSheet({
         ) : null}
       </nav>
 
-      {isOwner ? <MobileMoreDisplaySettings /> : null}
+      <MobileMoreDisplaySettings />
     </BottomSheet>
   );
 }

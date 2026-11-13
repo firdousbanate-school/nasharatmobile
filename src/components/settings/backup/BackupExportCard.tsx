@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Database, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { exportBackupAction } from "@/actions/backup";
+import { exportBackupAction, getSchoolStorageFilesAction } from "@/actions/backup";
+import { buildBackupZipArchive } from "./buildBackupZipArchive";
 import { ExportManifestSummary } from "./ExportManifestSummary";
 import type { BackupMetadata } from "@/lib/backup/types";
 
@@ -24,14 +25,16 @@ export function BackupExportCard() {
         return;
       }
 
-      const jsonString = JSON.stringify(res.backup, null, 2);
-      const url = URL.createObjectURL(new Blob([jsonString], { type: "application/json" }));
+      const storageRes = await getSchoolStorageFilesAction();
+      const zipBlob = await buildBackupZipArchive(res.backup, storageRes.files ?? []);
+
+      const url = URL.createObjectURL(zipBlob);
       const a = document.createElement("a");
       const dateStr = new Date().toISOString().slice(0, 10);
       const scopeStr = res.backup.metadata.schoolId ? "school" : "platform";
 
       a.href = url;
-      a.download = `backup-${scopeStr}-${dateStr}.json`;
+      a.download = `backup-${scopeStr}-complete-${dateStr}.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

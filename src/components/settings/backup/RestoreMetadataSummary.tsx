@@ -3,7 +3,13 @@
 import { useTranslations } from "next-intl";
 import type { DatabaseBackupPayload } from "@/lib/backup";
 
-export function RestoreMetadataSummary({ payload }: { payload: DatabaseBackupPayload }) {
+export function RestoreMetadataSummary({
+  payload,
+  storageFilesCount,
+}: {
+  payload: DatabaseBackupPayload;
+  storageFilesCount?: number;
+}) {
   const t = useTranslations("backup");
   const tableEntries = Object.entries(payload.tables).filter(
     ([, rows]) => Array.isArray(rows) && rows.length > 0,
@@ -29,6 +35,14 @@ export function RestoreMetadataSummary({ payload }: { payload: DatabaseBackupPay
         <span className="text-muted-foreground">{t("totalRecords")}:</span>
         <span className="font-semibold text-primary">{totalCount}</span>
       </div>
+      {typeof storageFilesCount === "number" && storageFilesCount > 0 ? (
+        <div className="flex justify-between border-b border-border/50 py-1">
+          <span className="text-muted-foreground">Storage Files:</span>
+          <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+            {t("storageFilesIncluded", { count: storageFilesCount })}
+          </span>
+        </div>
+      ) : null}
       {checksum ? (
         <div className="flex justify-between gap-3 border-b border-border/50 py-1">
           <span className="shrink-0 text-muted-foreground">{t("checksum")}:</span>
