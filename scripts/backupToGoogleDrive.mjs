@@ -274,7 +274,8 @@ async function runWeeklyBackup() {
   const tokenData = loadGoogleTokenData();
   const accessToken = await getFreshAccessToken(tokenData);
 
-  const { data: schools } = await supabase.from("schools").select("*").limit(1);
+  const { data: schools, error: schoolsError } = await supabase.from("schools").select("*").limit(1);
+  if (schoolsError) throw new Error(`Failed to query schools: ${schoolsError.message}`);
   const school = schools?.[0];
   if (!school) throw new Error("No school found for backup");
 
