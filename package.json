@@ -20,6 +20,7 @@
     "ping:supabase": "node --env-file=.env.local scripts/ping-supabase.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "archive": "node scripts/createArchive.mjs",
+    "backup:gdrive": "node scripts/backupToGoogleDrive.mjs",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run scan:secrets && npm run build"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@supabase/supabase-js": "^2.118.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jszip": "^3.10.2",
     "lucide-react": "^1.61.0",
     "next": "16.4.2",
     "next-intl": "^4.14.9",
