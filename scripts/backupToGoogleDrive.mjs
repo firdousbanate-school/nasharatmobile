@@ -87,7 +87,10 @@ function computeBackupChecksum(tables) {
     return value;
   };
 
-  return crypto.createHash("sha256").update(JSON.stringify(canonicalize(tables))).digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify(canonicalize(tables)))
+    .digest("hex");
 }
 
 async function fetchSchoolRoleIds(supabase, schoolId) {
@@ -174,7 +177,10 @@ async function runWeeklyBackup() {
   const supabase = loadSupabaseCredentials();
   const drive = await createDriveClient();
 
-  const { data: schools, error: schoolsError } = await supabase.from("schools").select("*").limit(1);
+  const { data: schools, error: schoolsError } = await supabase
+    .from("schools")
+    .select("*")
+    .limit(1);
   if (schoolsError) throw new Error(`Failed to query schools: ${schoolsError.message}`);
   const school = schools?.[0];
   if (!school) throw new Error("No school found for backup");

@@ -92,9 +92,12 @@ describe("requestPasswordResetAction", () => {
   });
 
   it("maps Supabase 429 / 60-second cooldown error to rate_limited", async () => {
-    const cooldownErr = Object.assign(new Error("For security purposes, you can only request this after 60 seconds."), {
-      status: 429,
-    });
+    const cooldownErr = Object.assign(
+      new Error("For security purposes, you can only request this after 60 seconds."),
+      {
+        status: 429,
+      },
+    );
     mockResetPasswordForEmail.mockResolvedValueOnce({ error: cooldownErr });
 
     const formData = new FormData();

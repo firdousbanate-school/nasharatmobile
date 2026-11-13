@@ -35,7 +35,10 @@ export default async function ResetPasswordPage({
           <Link href="/forgot-password" className={AUTH_BUTTON}>
             {t("requestNewResetLink")}
           </Link>
-          <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground hover:underline">
+          <Link
+            href="/login"
+            className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+          >
             {t("backToSignIn")}
           </Link>
         </div>
