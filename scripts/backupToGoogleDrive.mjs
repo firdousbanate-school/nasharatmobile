@@ -1,11 +1,17 @@
 import crypto from "crypto";
 import fs from "fs";
-import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import JSZip from "jszip";
+import { createDriveClient } from "./gdrive/createDriveClient.mjs";
 
 const DEFAULT_ROOT_FOLDER_NAME = "NasharatMobile Backups";
-const BUCKETS = ["public-assets", "school-documents", "circular-attachments", "maintenance-photos"];
+const BUCKETS = [
+  "public-assets",
+  "school-documents",
+  "circular-attachments",
+  "maintenance-photos",
+  "achievement-attachments",
+];
 
 const TABLES = [
   "schools",
@@ -20,11 +26,15 @@ const TABLES = [
   "circulars",
   "circular_targets",
   "circular_responses",
+  "circular_attachments",
   "maintenance_requests",
   "maintenance_assignments",
   "maintenance_updates",
+  "maintenance_attachments",
   "calendar_events",
+  "school_documents",
   "school_achievements",
+  "achievement_attachments",
 ];
 
 function loadSupabaseCredentials() {
@@ -47,148 +57,6 @@ function loadSupabaseCredentials() {
   return createClient(url, key);
 }
 
-function loadGoogleTokenData() {
-  if (process.env.GDRIVE_TOKEN_JSON) {
-    return JSON.parse(process.env.GDRIVE_TOKEN_JSON);
-  }
-  const localTokenPath = path.join(
-    process.env.USERPROFILE || "",
-    ".gemini/antigravity/plugin_data/gdrive/token.json",
-  );
-  if (fs.existsSync(localTokenPath)) {
-    return JSON.parse(fs.readFileSync(localTokenPath, "utf8"));
-  }
-  throw new Error("No Google Drive authentication token found.");
-}
-
-async function getServiceAccountAccessToken(tokenData) {
-  const now = Math.floor(Date.now() / 1000);
-  const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
-  const claim = Buffer.from(
-    JSON.stringify({
-      iss: tokenData.client_email,
-      scope: "https://www.googleapis.com/auth/drive",
-      aud: tokenData.token_uri || "https://oauth2.googleapis.com/token",
-      exp: now + 3600,
-      iat: now,
-    }),
-  ).toString("base64url");
-
-  const signature = crypto
-    .createSign("RSA-SHA256")
-    .update(`${header}.${claim}`)
-    .sign(tokenData.private_key, "base64url");
-
-  const params = new URLSearchParams({
-    grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    assertion: `${header}.${claim}.${signature}`,
-  });
-
-  const res = await fetch(tokenData.token_uri || "https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
-  });
-
-  const data = await res.json();
-  if (!data.access_token) {
-    throw new Error(`Failed to get service account token: ${JSON.stringify(data)}`);
-  }
-  return data.access_token;
-}
-
-async function getFreshAccessToken(tokenData) {
-  if (tokenData.type === "service_account") {
-    return getServiceAccountAccessToken(tokenData);
-  }
-
-  const refreshToken = tokenData.token?.refresh_token || tokenData.refresh_token;
-  const clientId = tokenData.client_id;
-  const clientSecret = tokenData.client_secret;
-
-  const params = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
-    refresh_token: refreshToken,
-    grant_type: "refresh_token",
-  });
-
-  const res = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
-  });
-
-  const data = await res.json();
-  if (!data.access_token) {
-    throw new Error(`Failed to refresh Google access token: ${JSON.stringify(data)}`);
-  }
-  return data.access_token;
-}
-
-async function findOrCreateFolder(accessToken, folderName, parentId) {
-  const parentClause = parentId ? `'${parentId}' in parents and ` : `'root' in parents and `;
-  const query = `${parentClause}name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
-  const listUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=files(id,name)`;
-  const listRes = await fetch(listUrl, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  const listData = await listRes.json();
-  if (listData.files?.length > 0) {
-    console.log(`Found existing folder "${folderName}" (ID: ${listData.files[0].id})`);
-    return listData.files[0].id;
-  }
-
-  console.log(`Creating folder in Google Drive: "${folderName}"...`);
-  const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: folderName,
-      mimeType: "application/vnd.google-apps.folder",
-      ...(parentId ? { parents: [parentId] } : {}),
-    }),
-  });
-  const createData = await createRes.json();
-  if (!createData.id) {
-    throw new Error(`Failed to create folder "${folderName}": ${JSON.stringify(createData)}`);
-  }
-  console.log(`Created folder ID: ${createData.id}`);
-  return createData.id;
-}
-
-async function uploadFileToDrive(accessToken, parentId, fileName, mimeType, buffer) {
-  const boundary = `boundary_${Date.now()}`;
-  const delimiter = `\r\n--${boundary}\r\n`;
-  const closeDelim = `\r\n--${boundary}--\r\n`;
-
-  const metadata = { name: fileName, parents: [parentId] };
-  const body = Buffer.concat([
-    Buffer.from(
-      `${delimiter}Content-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n`,
-    ),
-    Buffer.from(`${delimiter}Content-Type: ${mimeType}\r\n\r\n`),
-    buffer,
-    Buffer.from(closeDelim),
-  ]);
-
-  const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": `multipart/related; boundary=${boundary}`,
-    },
-    body,
-  });
-
-  const data = await res.json();
-  if (!data.id) throw new Error(`Drive upload failed for ${fileName}: ${JSON.stringify(data)}`);
-  return data.id;
-}
-
 async function listFolderFiles(supabase, bucket, prefix) {
   const { data: items, error } = await supabase.storage.from(bucket).list(prefix);
   if (error || !items) return [];
@@ -206,47 +74,80 @@ async function listFolderFiles(supabase, bucket, prefix) {
   return files;
 }
 
+function computeBackupChecksum(tables) {
+  const canonicalize = (value) => {
+    if (Array.isArray(value)) return value.map(canonicalize);
+    if (value !== null && typeof value === "object") {
+      return Object.fromEntries(
+        Object.keys(value)
+          .sort()
+          .map((key) => [key, canonicalize(value[key])]),
+      );
+    }
+    return value;
+  };
+
+  return crypto.createHash("sha256").update(JSON.stringify(canonicalize(tables))).digest("hex");
+}
+
+async function fetchSchoolRoleIds(supabase, schoolId) {
+  const { data: roles, error } = await supabase
+    .from("roles")
+    .select("id")
+    .eq("school_id", schoolId);
+  if (error) throw new Error(`Failed to query roles: ${error.message}`);
+  return (roles || []).map((r) => r.id);
+}
+
+function buildTableQuery(supabase, table, schoolId, roleIds) {
+  const query = supabase.from(table).select("*");
+  if (table === "schools") return query.eq("id", schoolId);
+  if (table === "role_permissions") return query.in("role_id", roleIds);
+  return query.eq("school_id", schoolId);
+}
+
 async function exportTableRows(supabase, table, schoolId) {
-  let query = supabase.from(table).select("*");
-  if (table === "schools") {
-    query = query.eq("id", schoolId);
-  } else if (table === "role_permissions") {
-    const { data: roles } = await supabase.from("roles").select("id").eq("school_id", schoolId);
-    const roleIds = (roles || []).map((r) => r.id);
-    query = query.in(
-      "role_id",
-      roleIds.length ? roleIds : ["00000000-0000-0000-0000-000000000000"],
-    );
-  } else {
-    query = query.eq("school_id", schoolId);
+  const roleIds = table === "role_permissions" ? await fetchSchoolRoleIds(supabase, schoolId) : [];
+  if (table === "role_permissions" && roleIds.length === 0) return [];
+
+  const allRows = [];
+  const pageSize = 1000;
+  for (let from = 0; ; from += pageSize) {
+    const query = buildTableQuery(supabase, table, schoolId, roleIds);
+    const { data, error } = await query.range(from, from + pageSize - 1);
+    if (error) throw new Error(`Failed to export table ${table}: ${error.message}`);
+    const page = data || [];
+    allRows.push(...page);
+    if (page.length < pageSize) return allRows;
   }
-  const { data: rows } = await query;
-  return rows || [];
 }
 
 async function exportDatabaseTables(supabase, schoolId, schoolName) {
-  const payload = {
-    version: 2,
-    metadata: {
-      exportedAt: new Date().toISOString(),
-      schoolId,
-      schoolName,
-      scope: "school",
-      totalRows: 0,
-      tableCounts: {},
-    },
-    tables: {},
-  };
-
+  const tables = {};
+  const tableCounts = {};
   let totalRows = 0;
+
   for (const table of TABLES) {
     const rows = await exportTableRows(supabase, table, schoolId);
-    payload.tables[table] = rows;
-    payload.metadata.tableCounts[table] = rows.length;
+    tables[table] = rows;
+    tableCounts[table] = rows.length;
     totalRows += rows.length;
   }
-  payload.metadata.totalRows = totalRows;
-  return payload;
+
+  return {
+    metadata: {
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      exportedBy: "github-actions-backup",
+      scope: "school",
+      schoolId,
+      schoolName,
+      totalRows,
+      tableCounts,
+      checksum: computeBackupChecksum(tables),
+    },
+    tables,
+  };
 }
 
 async function downloadAndZipStorage(supabase, schoolId, zip) {
@@ -271,8 +172,7 @@ async function runWeeklyBackup() {
   console.log("==========================================================");
 
   const supabase = loadSupabaseCredentials();
-  const tokenData = loadGoogleTokenData();
-  const accessToken = await getFreshAccessToken(tokenData);
+  const drive = await createDriveClient();
 
   const { data: schools, error: schoolsError } = await supabase.from("schools").select("*").limit(1);
   if (schoolsError) throw new Error(`Failed to query schools: ${schoolsError.message}`);
@@ -298,13 +198,12 @@ async function runWeeklyBackup() {
 
   const parentFolderId =
     process.env.GDRIVE_PARENT_FOLDER_ID ||
-    (await findOrCreateFolder(accessToken, DEFAULT_ROOT_FOLDER_NAME, null));
+    (await drive.findOrCreateFolder(DEFAULT_ROOT_FOLDER_NAME, null));
 
-  const datedFolderId = await findOrCreateFolder(accessToken, `Backup_${dateStr}`, parentFolderId);
+  const datedFolderId = await drive.findOrCreateFolder(`Backup_${dateStr}`, parentFolderId);
 
   console.log("Uploading full zip package to Google Drive...");
-  await uploadFileToDrive(
-    accessToken,
+  await drive.uploadFile(
     datedFolderId,
     `Al_Firdous_Full_Backup_${dateStr}.zip`,
     "application/zip",
@@ -312,8 +211,7 @@ async function runWeeklyBackup() {
   );
 
   console.log("Uploading database JSON to Google Drive...");
-  await uploadFileToDrive(
-    accessToken,
+  await drive.uploadFile(
     datedFolderId,
     `database_backup_${dateStr}.json`,
     "application/json",
@@ -321,13 +219,7 @@ async function runWeeklyBackup() {
   );
 
   console.log("Uploading README to Google Drive...");
-  await uploadFileToDrive(
-    accessToken,
-    datedFolderId,
-    "README.txt",
-    "text/plain",
-    Buffer.from(readme),
-  );
+  await drive.uploadFile(datedFolderId, "README.txt", "text/plain", Buffer.from(readme));
 
   console.log("==========================================================");
   console.log(`SUCCESS: Cloud backup completed and saved into "Backup_${dateStr}".`);
