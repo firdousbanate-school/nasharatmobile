@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
       variant="outline"
       size="sm"
       onClick={handleToggle}
-      className="text-xs font-medium"
+      className="h-8 px-2 text-[11px] font-medium sm:px-3 sm:text-xs"
       aria-label={`${t("language")}: ${targetLabel}`}
     >
       {targetLabel}

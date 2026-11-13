@@ -78,10 +78,10 @@ describe("MobileTabBar", () => {
     ).toBeDefined();
   });
 
-  it("hides language and theme controls from non-owners (same rule as the desktop header)", () => {
+  it("shows language and theme controls to non-owners as well (matching the header)", () => {
     const sheet = openMore();
-    expect(sheet.queryByText("lang")).toBeNull();
-    expect(sheet.queryByText("theme")).toBeNull();
+    expect(sheet.getByText("lang")).toBeDefined();
+    expect(sheet.getByText("theme")).toBeDefined();
   });
 
   it("offers language and theme controls to the owner", () => {
