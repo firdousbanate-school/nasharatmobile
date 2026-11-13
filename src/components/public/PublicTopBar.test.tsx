@@ -67,7 +67,11 @@ describe("PublicTopBar", () => {
     expect(kuwaitMoe.parentElement?.className).toContain("flex-row");
     expect(kuwaitMoe.parentElement?.className).toContain("justify-between");
     expect(kuwaitMoe.parentElement?.className).toContain("md:flex-col");
-    expect(screen.getByTestId("instagram-link")).toBeInTheDocument();
+    const instagramLink = screen.getByTestId("instagram-link");
+    expect(instagramLink).toBeInTheDocument();
+    expect(instagramLink.parentElement?.className).toContain("order-last");
+    expect(instagramLink.parentElement?.className).toContain("md:order-none");
+    expect(instagramLink.parentElement?.parentElement?.className).toContain("justify-between");
     expect(screen.getByRole("link", { name: /دخول منصة المدرسة/ })).toBeInTheDocument();
   });
 });

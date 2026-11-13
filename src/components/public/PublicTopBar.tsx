@@ -38,15 +38,25 @@ export function PublicTopBar({
           <PublicTopBarBrand school={school} />
         </div>
 
-        <div className="flex shrink-0 items-center justify-center gap-2.5 md:justify-end">
-          <PublicInstagramLink url={school?.instagram_url} />
-          <PublicTopBarLoginButton />
-          {isOwner ? (
-            <>
-              <LanguageSwitcher />
-              <ThemeToggle />
-            </>
-          ) : null}
+        <div
+          className={
+            isArabic
+              ? "flex w-full shrink-0 items-center justify-between gap-2.5 md:w-auto md:justify-end"
+              : "flex shrink-0 items-center justify-center gap-2.5 md:justify-end"
+          }
+        >
+          <div className={isArabic ? "order-last md:order-none" : ""}>
+            <PublicInstagramLink url={school?.instagram_url} />
+          </div>
+          <div className="flex items-center gap-2.5">
+            <PublicTopBarLoginButton />
+            {isOwner ? (
+              <>
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
 
