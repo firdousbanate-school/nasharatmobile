@@ -7,6 +7,7 @@ const ALLOWED_BUCKETS = new Set([
   "school-documents",
   "circular-attachments",
   "maintenance-photos",
+  "achievement-attachments",
 ]);
 
 export function assertValidRestoreStorageTarget(

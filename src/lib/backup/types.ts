@@ -29,11 +29,15 @@ export type DatabaseBackupPayload = {
     circulars?: Record<string, unknown>[];
     circular_targets?: Record<string, unknown>[];
     circular_responses?: Record<string, unknown>[];
+    circular_attachments?: Record<string, unknown>[];
     maintenance_requests?: Record<string, unknown>[];
     maintenance_assignments?: Record<string, unknown>[];
     maintenance_updates?: Record<string, unknown>[];
+    maintenance_attachments?: Record<string, unknown>[];
     calendar_events?: Record<string, unknown>[];
+    school_documents?: Record<string, unknown>[];
     school_achievements?: Record<string, unknown>[];
+    achievement_attachments?: Record<string, unknown>[];
   };
 };
 

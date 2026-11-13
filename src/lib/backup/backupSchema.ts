@@ -34,11 +34,15 @@ export const backupSchema = z
       circulars: table,
       circular_targets: table,
       circular_responses: table,
+      circular_attachments: table,
       maintenance_requests: table,
       maintenance_assignments: table,
       maintenance_updates: table,
+      maintenance_attachments: table,
       calendar_events: table,
+      school_documents: table,
       school_achievements: table,
+      achievement_attachments: table,
     }),
   })
   .superRefine((value, ctx) => {

@@ -33,9 +33,13 @@ export const BACKUP_TABLES: readonly BackupTableSpec[] = [
   { name: "circulars", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "circular_targets", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "circular_responses", conflictColumns: ["id"], orderColumns: ["id"] },
+  { name: "circular_attachments", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "maintenance_requests", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "maintenance_assignments", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "maintenance_updates", conflictColumns: ["id"], orderColumns: ["id"] },
+  { name: "maintenance_attachments", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "calendar_events", conflictColumns: ["id"], orderColumns: ["id"] },
+  { name: "school_documents", conflictColumns: ["id"], orderColumns: ["id"] },
   { name: "school_achievements", conflictColumns: ["id"], orderColumns: ["id"] },
+  { name: "achievement_attachments", conflictColumns: ["id"], orderColumns: ["id"] },
 ];

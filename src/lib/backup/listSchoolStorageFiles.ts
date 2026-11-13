@@ -12,6 +12,7 @@ const BUCKETS = [
   "school-documents",
   "circular-attachments",
   "maintenance-photos",
+  "achievement-attachments",
 ] as const;
 
 async function listFolderFiles(
