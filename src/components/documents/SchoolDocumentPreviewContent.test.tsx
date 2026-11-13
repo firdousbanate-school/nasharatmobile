@@ -25,16 +25,12 @@ const basePdfDoc: SchoolDocumentRow = {
 };
 
 describe("SchoolDocumentPreviewContent", () => {
-  it("renders mobile open/download actions and desktop iframe for PDF documents", () => {
+  it("renders mobile open action and desktop iframe for PDF documents", () => {
     render(<SchoolDocumentPreviewContent currentDoc={basePdfDoc} />);
 
     const openLink = screen.getByRole("link", { name: "openInNewTab" });
     expect(openLink).toHaveAttribute("href", "/api/documents/doc-1/preview");
     expect(openLink).toHaveAttribute("target", "_blank");
-
-    const downloadLink = screen.getByRole("link", { name: "download" });
-    expect(downloadLink).toHaveAttribute("href", "/api/documents/doc-1/preview");
-    expect(downloadLink).toHaveAttribute("download", "plan.pdf");
 
     const iframe = screen.getByTitle("Operational Plan");
     expect(iframe).toHaveAttribute("src", "/api/documents/doc-1/preview");
