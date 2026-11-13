@@ -11,7 +11,7 @@ export function LanguageSwitcher() {
   const t = useTranslations("common");
 
   const targetLocale = locale === "ar" ? "en" : "ar";
-  const targetLabel = locale === "ar" ? "English" : "العربية";
+  const targetLabel = locale === "ar" ? "EN" : "AR";
 
   const handleToggle = () => {
     router.replace(pathname, { locale: targetLocale });
