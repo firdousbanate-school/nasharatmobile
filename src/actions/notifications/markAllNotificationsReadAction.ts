@@ -26,6 +26,7 @@ export async function markAllNotificationsReadAction(): Promise<ActionResult> {
     }
 
     revalidatePath("/[locale]/notifications", "page");
+    revalidatePath("/[locale]", "layout");
     return { success: true };
   } catch (err: unknown) {
     const appError = sanitizeError(err);

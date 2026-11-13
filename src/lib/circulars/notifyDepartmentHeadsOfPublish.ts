@@ -28,7 +28,7 @@ export async function notifyDepartmentHeadsOfPublish(
     .filter((id): id is string => Boolean(id) && id !== publisherId);
 
   if (headIds.length > 0) {
-    void dispatchModuleNotification({
+    await dispatchModuleNotification({
       recipientUserIds: headIds,
       schoolId,
       type: "circular",
