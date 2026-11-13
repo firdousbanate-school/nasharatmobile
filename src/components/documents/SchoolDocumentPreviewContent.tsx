@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { FileTextIcon } from "lucide-react";
+import { DownloadIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
 import type { SchoolDocumentRow } from "@/lib/documents/types";
 
 export function SchoolDocumentPreviewContent({
@@ -41,10 +41,41 @@ export function SchoolDocumentPreviewContent({
   }
 
   return (
-    <iframe
-      src={fileUrl}
-      title={currentDoc.title}
-      className="h-[68vh] w-full rounded-lg border border-border/80 bg-white"
-    />
+    <>
+      <div className="flex w-full flex-col items-center justify-center gap-4 rounded-xl border border-border/80 bg-muted/20 p-6 text-center md:hidden">
+        <div className="grid size-14 place-items-center rounded-full bg-primary/10 text-primary">
+          <FileTextIcon className="size-7" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-foreground">{currentDoc.title}</p>
+          <p className="text-xs text-muted-foreground">{t("mobilePdfHint")}</p>
+        </div>
+        <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
+          >
+            <ExternalLinkIcon className="size-4" />
+            {t("openInNewTab")}
+          </a>
+          <a
+            href={fileUrl}
+            download={currentDoc.file_name || currentDoc.title}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground shadow-xs transition-colors hover:bg-accent"
+          >
+            <DownloadIcon className="size-4" />
+            {t("download")}
+          </a>
+        </div>
+      </div>
+
+      <iframe
+        src={fileUrl}
+        title={currentDoc.title}
+        className="hidden h-[68vh] w-full rounded-lg border border-border/80 bg-white md:block"
+      />
+    </>
   );
 }
