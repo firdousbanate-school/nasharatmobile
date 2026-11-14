@@ -81,6 +81,15 @@ describe("GET /api/health", () => {
     expect(mockPing).toHaveBeenCalledTimes(1);
   });
 
+  it("returns 503 in production for deep check when no secret is configured", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+
+    const response = await GET(new Request("http://localhost:3000/api/health?deep=1"));
+
+    expect(response.status).toBe(503);
+    expect(mockPing).not.toHaveBeenCalled();
+  });
+
   it("says the version is unknown instead of inventing one", async () => {
     vi.unstubAllEnvs();
 

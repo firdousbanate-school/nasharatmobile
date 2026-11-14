@@ -21,29 +21,24 @@ export async function deleteAchievementAttachmentAction(
     }
 
     const supabase = await createSupabaseServerClient();
-    const { data: attachment, error: readError } = await supabase
+    // Delete the database row under user RLS first so unauthorized callers
+    // cannot delete storage objects before RLS rejects the DB mutation.
+    const { data: deleted, error: deleteError } = await supabase
       .from("achievement_attachments")
-      .select("path")
+      .delete()
       .eq("id", attachmentId)
       .eq("achievement_id", achievementId)
+      .select("id, path")
       .maybeSingle();
 
-    if (readError) throw mapDatabaseError(readError);
-    if (!attachment) throw new NotFoundError("Attachment not found");
+    if (deleteError) throw mapDatabaseError(deleteError);
+    if (!deleted) throw new NotFoundError("Attachment not found");
 
     const admin = createSupabaseAdminClient({
       actorId: profile.id,
       actorLabel: profile.full_name,
     });
-    await admin.storage.from("achievement-attachments").remove([attachment.path]);
-
-    const { error: deleteError } = await supabase
-      .from("achievement_attachments")
-      .delete()
-      .eq("id", attachmentId)
-      .eq("achievement_id", achievementId);
-
-    if (deleteError) throw mapDatabaseError(deleteError);
+    await admin.storage.from("achievement-attachments").remove([deleted.path]);
 
     revalidatePath("/[locale]/achievements", "page");
     return { success: true };
