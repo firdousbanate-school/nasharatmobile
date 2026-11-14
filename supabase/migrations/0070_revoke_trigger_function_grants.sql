@@ -15,7 +15,13 @@ revoke all on function public.enforce_maintenance_update_scope() from public, an
 revoke all on function public.enforce_notification_read_only() from public, anon, authenticated;
 revoke all on function public.enforce_profile_self_update() from public, anon, authenticated;
 revoke all on function public.enforce_role_key_reserved() from public, anon, authenticated;
-revoke all on function public.rls_auto_enable() from public, anon, authenticated;
+do $$
+begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    execute 'revoke all on function public.rls_auto_enable() from public, anon, authenticated';
+  end if;
+end
+$$;
 revoke all on function public.sync_maintenance_request_operator() from public, anon, authenticated;
 revoke all on function public.sync_profile_department_to_assignments() from public, anon, authenticated;
 
