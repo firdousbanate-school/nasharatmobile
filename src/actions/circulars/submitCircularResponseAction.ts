@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase";
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { assertCanRespondToCircular } from "@/lib/circulars/assertCanRespondToCircular";
 import { executeSubmitCircularResponse } from "@/lib/circulars/executeSubmitCircularResponse";
+import { notifyCircularResponseSubmitted } from "@/lib/circulars/notifyCircularResponseSubmitted";
 import { validateCircularResponse } from "@/lib/validation/validateCircularResponse";
 import type { CircularResponseStatus, CircularResponseType } from "@/lib/circulars/types";
 import { ValidationError } from "@/lib/errors/ValidationError";
@@ -40,6 +41,14 @@ export async function submitCircularResponseAction({
       responseType,
       status,
       reason,
+    });
+
+    await notifyCircularResponseSubmitted({
+      circularId,
+      schoolId,
+      departmentId,
+      actorUserId: profile!.id,
+      status,
     });
 
     revalidatePath("/[locale]/circulars", "page");

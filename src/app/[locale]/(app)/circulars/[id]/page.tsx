@@ -11,6 +11,7 @@ import { canRespondToCircular } from "@/lib/circulars/canRespondToCircular";
 import { getEffectivePermissions } from "@/lib/rbac/getEffectivePermissions";
 import { getSchoolDepartments } from "@/lib/school/getSchoolDepartments";
 import { getCircularDepartmentStatuses, getCircularPermissions } from "@/lib/circulars";
+import { markEntityNotificationsRead } from "@/lib/notifications/markEntityNotificationsRead";
 import { CircularDetailTabs } from "@/components/circulars";
 
 export default async function CircularDetailPage({
@@ -29,6 +30,7 @@ export default async function CircularDetailPage({
     getEffectivePermissions(profile?.school_id).catch((): string[] => []),
     getSchoolDepartments(profile?.school_id),
     isCurrentUserPlatformOwner(profile?.id),
+    markEntityNotificationsRead("circular", id),
   ]);
 
   if (!circular) {

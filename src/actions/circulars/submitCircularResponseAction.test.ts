@@ -10,6 +10,12 @@ import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { hasPermission } from "@/lib/rbac/hasPermission";
 import { createSupabaseServerClient } from "@/lib/supabase";
 
+const mockNotifyResponse = vi.hoisted(() => vi.fn());
+
+vi.mock("@/lib/circulars/notifyCircularResponseSubmitted", () => ({
+  notifyCircularResponseSubmitted: mockNotifyResponse,
+}));
+
 vi.mock("@/lib/auth/getCurrentProfile", () => ({
   getCurrentProfile: vi.fn(),
 }));
@@ -25,6 +31,7 @@ vi.mock("@/lib/supabase", () => ({
 describe("submitCircularResponseAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNotifyResponse.mockResolvedValue(undefined);
   });
 
   it("submits response via transactional RPC", async () => {
@@ -60,6 +67,13 @@ describe("submitCircularResponseAction", () => {
       p_response_type: "acknowledgement",
       p_status: "acknowledged",
       p_reason: null,
+    });
+    expect(mockNotifyResponse).toHaveBeenCalledWith({
+      circularId: "circ-1",
+      schoolId: "sch-1",
+      departmentId: "dept-1",
+      actorUserId: "usr-1",
+      status: "acknowledged",
     });
   });
 

@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { createSupabaseBrowserClient } from "@/lib/supabase/createSupabaseBrowserClient";
 import { resolveNotificationHref } from "@/lib/notifications/resolveNotificationHref";
 import { resolveNotificationText } from "@/lib/notifications/resolveNotificationText";
+import { showBrowserNotification } from "@/lib/notifications/showBrowserNotification";
+import { markNotificationReadAction } from "@/actions/notifications/markNotificationReadAction";
 import type { NotificationRow } from "@/lib/notifications/types";
 
 export function RealtimeNotificationListener({ userId }: { userId: string }) {
@@ -34,12 +36,20 @@ export function RealtimeNotificationListener({ userId }: { userId: string }) {
           const href = resolveNotificationHref(row);
           const content = resolveNotificationText(row, t);
 
+          showBrowserNotification({
+            title: content.title,
+            body: content.body,
+          });
+
           toast.info(content.title, {
             description: content.body ?? undefined,
             action: href
               ? {
                   label: t("view"),
-                  onClick: () => router.push(href),
+                  onClick: () => {
+                    void markNotificationReadAction(row.id);
+                    router.push(href);
+                  },
                 }
               : undefined,
           });

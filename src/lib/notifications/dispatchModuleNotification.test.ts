@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockRecord, mockAdminFrom } = vi.hoisted(() => ({
-  mockRecord: vi.fn(),
+const { mockBatchInsert, mockAdminFrom } = vi.hoisted(() => ({
+  mockBatchInsert: vi.fn(),
   mockAdminFrom: vi.fn(),
 }));
 
@@ -9,8 +9,8 @@ vi.mock("@/lib/supabase", () => ({
   createSupabaseAdminClient: () => ({ from: mockAdminFrom }),
 }));
 
-vi.mock("./createNotificationRecord", () => ({
-  createNotificationRecord: (...args: unknown[]) => mockRecord(...args),
+vi.mock("./insertBatchNotificationRecords", () => ({
+  insertBatchNotificationRecords: (...args: unknown[]) => mockBatchInsert(...args),
 }));
 
 import { dispatchModuleNotification } from "./dispatchModuleNotification";
@@ -34,7 +34,7 @@ const baseInput = {
 describe("dispatchModuleNotification", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRecord.mockResolvedValue({ success: true, id: "notification-1" });
+    mockBatchInsert.mockResolvedValue(1);
   });
 
   it("drops recipients that are not active members of the school (H-12)", async () => {
@@ -45,10 +45,10 @@ describe("dispatchModuleNotification", () => {
       recipientUserIds: ["member-1", "foreign-user"],
     });
 
-    expect(mockRecord).toHaveBeenCalledTimes(1);
-    expect(mockRecord).toHaveBeenCalledWith(
+    expect(mockBatchInsert).toHaveBeenCalledTimes(1);
+    expect(mockBatchInsert).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ userId: "member-1", schoolId: "school-1" }),
+      expect.objectContaining({ userIds: ["member-1"], schoolId: "school-1" }),
     );
     expect(result).toEqual({ delivered: 1 });
   });
@@ -61,7 +61,7 @@ describe("dispatchModuleNotification", () => {
       recipientUserIds: ["member-1"],
     });
 
-    expect(mockRecord).not.toHaveBeenCalled();
+    expect(mockBatchInsert).not.toHaveBeenCalled();
     expect(result).toEqual({ delivered: 0 });
   });
 
@@ -73,7 +73,7 @@ describe("dispatchModuleNotification", () => {
     });
 
     expect(mockAdminFrom).not.toHaveBeenCalled();
-    expect(mockRecord).not.toHaveBeenCalled();
+    expect(mockBatchInsert).not.toHaveBeenCalled();
     expect(result).toEqual({ delivered: 0 });
   });
 
@@ -85,7 +85,7 @@ describe("dispatchModuleNotification", () => {
       recipientUserIds: ["foreign-1", "foreign-2"],
     });
 
-    expect(mockRecord).not.toHaveBeenCalled();
+    expect(mockBatchInsert).not.toHaveBeenCalled();
     expect(result).toEqual({ delivered: 0 });
   });
 });

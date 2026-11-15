@@ -76,7 +76,7 @@ export function NotificationItem({ notification }: { notification: NotificationR
           </Button>
         )}
         {href && (
-          <Link href={href}>
+          <Link href={href} onClick={() => void markNotificationReadAction(notification.id)}>
             <Button variant="outline" size="sm" className="gap-1 text-xs">
               <span>{t("viewDetails")}</span>
               <ExternalLinkIcon className="size-3.5" />

@@ -7,6 +7,7 @@ const m = vi.hoisted(() => ({
   from: vi.fn(),
   assertCanAdd: vi.fn(),
   insertUpdate: vi.fn(),
+  notifyNote: vi.fn(),
   revalidate: vi.fn(),
 }));
 
@@ -23,6 +24,9 @@ vi.mock("@/lib/maintenance/assertCanAddNote", () => ({ assertCanAddNote: m.asser
 vi.mock("@/lib/maintenance/insertMaintenanceUpdate", () => ({
   insertMaintenanceUpdate: m.insertUpdate,
 }));
+vi.mock("@/lib/maintenance/notifyMaintenanceNoteAdded", () => ({
+  notifyMaintenanceNoteAdded: m.notifyNote,
+}));
 
 import { addMaintenanceNoteAction } from "./addMaintenanceNoteAction";
 
@@ -32,6 +36,7 @@ const ticketRow = {
   school_id: "s-1",
   reporter_id: "rep-1",
   assigned_operator_id: "op-1",
+  title: "Broken AC",
 };
 
 describe("addMaintenanceNoteAction", () => {
@@ -42,6 +47,7 @@ describe("addMaintenanceNoteAction", () => {
     m.from.mockReturnValue(createQueryChain({ data: ticketRow }).chain);
     m.assertCanAdd.mockResolvedValue(true);
     m.insertUpdate.mockResolvedValue({ error: null });
+    m.notifyNote.mockResolvedValue(undefined);
   });
 
   it("requires a profile with a school", async () => {
@@ -77,7 +83,7 @@ describe("addMaintenanceNoteAction", () => {
     expect(m.insertUpdate).not.toHaveBeenCalled();
   });
 
-  it("saves the trimmed note as the caller and refreshes the ticket page", async () => {
+  it("saves the trimmed note as the caller, notifies participants, and refreshes the ticket page", async () => {
     const res = await addMaintenanceNoteAction(form);
 
     expect(res).toEqual({ success: true });
@@ -87,6 +93,14 @@ describe("addMaintenanceNoteAction", () => {
       authorId: "me",
       kind: "note",
       reason: "checked the unit",
+    });
+    expect(m.notifyNote).toHaveBeenCalledWith({
+      requestId: "t-1",
+      schoolId: "s-1",
+      actorId: "me",
+      reporterId: "rep-1",
+      assignedOperatorId: "op-1",
+      title: "Broken AC",
     });
     expect(m.revalidate).toHaveBeenCalledWith("/[locale]/maintenance/t-1", "page");
   });

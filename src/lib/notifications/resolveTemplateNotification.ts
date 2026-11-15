@@ -1,4 +1,5 @@
 import { parseNotificationJsonBody, type NotificationJsonBody } from "./parseNotificationJsonBody";
+import { resolveCircularResponseBody } from "./resolveCircularResponseBody";
 import { resolveMaintenanceStatusBody } from "./resolveMaintenanceStatusBody";
 
 type Translator = (key: string, values?: Record<string, string | number>) => string;
@@ -12,10 +13,15 @@ const TEMPLATE_BODY_BUILDERS: Record<
     parsed?.ref && parsed?.title
       ? t("templates.circular_published.bodyWithRef", { ref: parsed.ref, title: parsed.title })
       : t("templates.circular_published.body"),
+  circular_response_submitted: resolveCircularResponseBody,
   maintenance_created: (parsed, t) =>
     parsed?.title
       ? t("templates.maintenance_created.bodyWithTitle", { title: parsed.title })
       : t("templates.maintenance_created.body"),
+  maintenance_note_added: (parsed, t) =>
+    parsed?.title
+      ? t("templates.maintenance_note_added.bodyWithTitle", { title: parsed.title })
+      : t("templates.maintenance_note_added.body"),
   calendar_published: (parsed, t) =>
     parsed?.title
       ? t("templates.calendar_published.bodyWithTitle", { title: parsed.title })

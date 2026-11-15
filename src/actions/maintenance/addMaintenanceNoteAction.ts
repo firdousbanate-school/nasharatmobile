@@ -6,6 +6,7 @@ import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
 import { parseMaintenanceNoteData } from "@/lib/validation/parseMaintenanceNoteData";
 import { insertMaintenanceUpdate } from "@/lib/maintenance/insertMaintenanceUpdate";
 import { assertCanAddNote } from "@/lib/maintenance/assertCanAddNote";
+import { notifyMaintenanceNoteAdded } from "@/lib/maintenance/notifyMaintenanceNoteAdded";
 import { AuthenticationError } from "@/lib/errors/AuthenticationError";
 import { ForbiddenError } from "@/lib/errors/ForbiddenError";
 import { ValidationError } from "@/lib/errors/ValidationError";
@@ -29,7 +30,7 @@ export async function addMaintenanceNoteAction(formData: FormData): Promise<Acti
     const supabase = await createSupabaseServerClient();
     const { data: ticket, error: ticketError } = await supabase
       .from("maintenance_requests")
-      .select("id, school_id, reporter_id, assigned_operator_id")
+      .select("id, school_id, reporter_id, assigned_operator_id, title")
       .eq("id", requestId)
       .maybeSingle();
 
@@ -62,6 +63,15 @@ export async function addMaintenanceNoteAction(formData: FormData): Promise<Acti
     if (res.error) {
       throw mapDatabaseError(res.error, "Failed to add note");
     }
+
+    await notifyMaintenanceNoteAdded({
+      requestId,
+      schoolId: profile.school_id,
+      actorId: profile.id,
+      reporterId: ticket.reporter_id,
+      assignedOperatorId: ticket.assigned_operator_id,
+      title: (ticket as { title?: string | null }).title,
+    });
 
     revalidatePath(`/[locale]/maintenance/${requestId}`, "page");
     return { success: true };

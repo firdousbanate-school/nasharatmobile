@@ -34,6 +34,12 @@ const mockChannel = {
   subscribe: vi.fn().mockReturnThis(),
 };
 
+const mockMarkRead = vi.fn().mockResolvedValue({ success: true });
+
+vi.mock("@/actions/notifications/markNotificationReadAction", () => ({
+  markNotificationReadAction: (...args: unknown[]) => mockMarkRead(...args),
+}));
+
 vi.mock("@/lib/supabase/createSupabaseBrowserClient", () => ({
   createSupabaseBrowserClient: () => ({
     channel: vi.fn().mockReturnValue(mockChannel),
@@ -95,6 +101,7 @@ describe("RealtimeNotificationListener", () => {
     const callArgs = vi.mocked(toast.info).mock.calls[0];
     const options = callArgs?.[1] as { action?: { onClick?: () => void } } | undefined;
     options?.action?.onClick?.();
+    expect(mockMarkRead).toHaveBeenCalledWith("notif-1");
     expect(mockPush).toHaveBeenCalledWith("/circulars/circ-456");
     expect(mockRefresh).toHaveBeenCalled();
   });

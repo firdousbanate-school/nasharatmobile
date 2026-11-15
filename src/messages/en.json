@@ -642,6 +642,14 @@
     "view": "View",
     "empty": "No notifications yet",
     "emptyDesc": "You are all caught up! New alerts and tasks will appear here.",
+    "showMore": "Show more",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "circular": "Circulars",
+      "maintenance": "Maintenance",
+      "calendar": "Calendar"
+    },
     "types": {
       "circular": "Circular",
       "maintenance": "Maintenance",
@@ -653,6 +661,11 @@
         "title": "New Administrative Circular",
         "body": "A new administrative circular has been published requiring your department's review and response",
         "bodyWithRef": "New administrative circular #{ref} ({title}) has been published for your department"
+      },
+      "circular_response_submitted": {
+        "title": "Department Circular Response Submitted",
+        "body": "A department has submitted its response to an administrative circular",
+        "bodyWithDetails": "{department} submitted a response to circular #{ref} ({title})"
       },
       "circular_reminder": {
         "title": "Urgent Reminder: Circular Response",
@@ -667,6 +680,11 @@
         "title": "New Maintenance Request Submitted",
         "body": "A new maintenance request has been submitted and awaits assignment",
         "bodyWithTitle": "New maintenance request submitted: {title}"
+      },
+      "maintenance_note_added": {
+        "title": "New Maintenance Note Added",
+        "body": "A new work note has been added to a maintenance request",
+        "bodyWithTitle": "New note added on maintenance request: {title}"
       },
       "maintenance_status_updated": {
         "title": "Maintenance Request Status Updated",

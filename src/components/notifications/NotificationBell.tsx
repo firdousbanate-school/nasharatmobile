@@ -1,12 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n";
 import { BellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { syncAppBadge } from "@/lib/notifications/syncAppBadge";
 
 export function NotificationBell({ unreadCount }: { unreadCount: number }) {
   const t = useTranslations("notifications");
+
+  useEffect(() => {
+    syncAppBadge(unreadCount);
+  }, [unreadCount]);
 
   return (
     <Link href="/notifications">

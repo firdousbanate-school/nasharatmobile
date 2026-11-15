@@ -1,6 +1,6 @@
 import { createSupabaseAdminClient } from "@/lib/supabase";
 import { logError } from "@/lib/logger/logError";
-import { createNotificationRecord } from "./createNotificationRecord";
+import { insertBatchNotificationRecords } from "./insertBatchNotificationRecords";
 import type { NotificationType, NotificationEntityKind } from "./types";
 
 export type DispatchNotificationResult = {
@@ -57,24 +57,16 @@ export async function dispatchModuleNotification({
     const allowedIds = (members ?? []).map((member) => member.id as string);
     if (!allowedIds.length) return { delivered: 0 };
 
-    const results = await Promise.allSettled(
-      allowedIds.map((userId) =>
-        createNotificationRecord(adminClient, {
-          userId,
-          schoolId,
-          type,
-          title,
-          body,
-          entityType,
-          entityId,
-          skipThrottle,
-        }),
-      ),
-    );
-
-    const delivered = results.filter(
-      (result) => result.status === "fulfilled" && !("error" in result.value),
-    ).length;
+    const delivered = await insertBatchNotificationRecords(adminClient, {
+      userIds: allowedIds,
+      schoolId,
+      type,
+      title,
+      body,
+      entityType,
+      entityId,
+      skipThrottle,
+    });
 
     return { delivered };
   } catch (error) {

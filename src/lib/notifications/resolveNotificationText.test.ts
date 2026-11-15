@@ -30,6 +30,12 @@ describe("resolveNotificationText", () => {
     if (key === "templates.calendar_published.bodyWithTitle") {
       return `Calendar: ${values?.title}`;
     }
+    if (key === "templates.circular_response_submitted.bodyWithDetails") {
+      return `${values?.department} responded to #${values?.ref} (${values?.title})`;
+    }
+    if (key === "templates.maintenance_note_added.bodyWithTitle") {
+      return `Note on: ${values?.title}`;
+    }
     return translations[key] ?? key;
   };
 
@@ -52,6 +58,23 @@ describe("resolveNotificationText", () => {
     );
     expect(res.title).toBe("New Administrative Circular");
     expect(res.body).toBe("Published #2026/05 (Exam Policy)");
+  });
+
+  it("translates circular response submitted notification with department and ref", () => {
+    const res = resolveNotificationText(
+      {
+        title: "circular_response_submitted",
+        body: JSON.stringify({
+          department: "Math",
+          ref: "2026/05",
+          title: "Exam Policy",
+          status: "acknowledged",
+        }),
+      },
+      mockT,
+    );
+    expect(res.title).toBe("templates.circular_response_submitted.title");
+    expect(res.body).toBe("Math responded to #2026/05 (Exam Policy)");
   });
 
   it("translates legacy Arabic string for published circular", () => {
@@ -87,7 +110,7 @@ describe("resolveNotificationText", () => {
     expect(res.body).toBe("A request has been assigned to you");
   });
 
-  it("translates maintenance creation and status update notifications", () => {
+  it("translates maintenance creation, note, and status update notifications", () => {
     const created = resolveNotificationText(
       {
         title: "maintenance_created",
@@ -97,6 +120,16 @@ describe("resolveNotificationText", () => {
     );
     expect(created.title).toBe("templates.maintenance_created.title");
     expect(created.body).toBe("Submitted: AC Leak");
+
+    const note = resolveNotificationText(
+      {
+        title: "maintenance_note_added",
+        body: JSON.stringify({ title: "AC Leak" }),
+      },
+      mockT,
+    );
+    expect(note.title).toBe("templates.maintenance_note_added.title");
+    expect(note.body).toBe("Note on: AC Leak");
 
     const updated = resolveNotificationText(
       {

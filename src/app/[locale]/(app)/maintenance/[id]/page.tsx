@@ -9,6 +9,7 @@ import { getMaintenanceRequestById } from "@/lib/maintenance/getMaintenanceReque
 import { getMaintenanceUpdates } from "@/lib/maintenance/getMaintenanceUpdates";
 import { getMaintenanceAttachments } from "@/lib/maintenance/getMaintenanceAttachments";
 import { getMaintenanceOperators } from "@/lib/maintenance/getMaintenanceOperators";
+import { markEntityNotificationsRead } from "@/lib/notifications/markEntityNotificationsRead";
 import { MaintenanceDetailCard } from "@/components/maintenance/MaintenanceDetailCard";
 import { MaintenanceAttachmentsList } from "@/components/maintenance/MaintenanceAttachmentsList";
 import { MaintenanceStatusActions } from "@/components/maintenance/MaintenanceStatusActions";
@@ -17,11 +18,9 @@ import { MaintenanceTimeline } from "@/components/maintenance/MaintenanceTimelin
 import { MaintenanceAddNoteBox } from "@/components/maintenance/MaintenanceAddNoteBox";
 import { SegmentedTabs } from "@/components/mobile";
 
-export default async function MaintenanceDetailPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+type MaintenanceDetailPageProps = { params: Promise<{ locale: string; id: string }> };
+
+export default async function MaintenanceDetailPage({ params }: MaintenanceDetailPageProps) {
   const { locale, id } = await params;
   setRequestLocale(locale);
 
@@ -41,6 +40,7 @@ export default async function MaintenanceDetailPage({
     getMaintenanceOperators(profile.school_id),
     hasPermission("maintenance.assign", profile.school_id).catch(() => false),
     hasPermission("maintenance.close", profile.school_id).catch(() => false),
+    markEntityNotificationsRead("maintenance_request", id),
   ]);
 
   const tMobile = await getTranslations("mobile");
@@ -67,9 +67,7 @@ export default async function MaintenanceDetailPage({
             content: (
               <div className="flex flex-col gap-6">
                 <MaintenanceDetailCard ticket={ticket} />
-
                 <MaintenanceAttachmentsList attachments={attachments} />
-
                 <MaintenanceStatusActions
                   requestId={id}
                   status={ticket.status}
@@ -78,7 +76,6 @@ export default async function MaintenanceDetailPage({
                   canAssign={canAssign}
                   canClose={canClose}
                 />
-
                 {canAssign && (
                   <MaintenanceAssignSection
                     requestId={id}
@@ -97,7 +94,6 @@ export default async function MaintenanceDetailPage({
             content: (
               <div className="flex flex-col gap-6">
                 <MaintenanceTimeline updates={updates} />
-
                 {isParticipant && <MaintenanceAddNoteBox requestId={id} />}
               </div>
             ),
