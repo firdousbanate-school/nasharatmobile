@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
 import { shouldThrottleNotification } from "./shouldThrottleNotification";
 import type { NotificationEntityKind, NotificationType } from "./types";
 
@@ -17,7 +18,7 @@ export async function getThrottledRecipientIds(
     return new Set();
   }
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("notifications")
     .select("user_id, created_at")
     .in("user_id", userIds)
@@ -25,6 +26,10 @@ export async function getThrottledRecipientIds(
     .eq("entity_type", entityType)
     .eq("entity_id", entityId)
     .is("read_at", null);
+
+  if (error) {
+    throw mapDatabaseError(error);
+  }
 
   const throttled = new Set<string>();
   for (const row of data ?? []) {

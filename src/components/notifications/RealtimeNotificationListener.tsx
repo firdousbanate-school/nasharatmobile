@@ -36,9 +36,11 @@ export function RealtimeNotificationListener({ userId }: { userId: string }) {
           const href = resolveNotificationHref(row);
           const content = resolveNotificationText(row, t);
 
-          showBrowserNotification({
+          void showBrowserNotification({
             title: content.title,
             body: content.body,
+            url: href,
+            tag: row.id,
           });
 
           toast.info(content.title, {

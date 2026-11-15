@@ -2,6 +2,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase";
 import { dispatchModuleNotification } from "@/lib/notifications/dispatchModuleNotification";
 import { getSchoolPermissionHolderIds } from "@/lib/maintenance/getSchoolPermissionHolderIds";
 import { logError } from "@/lib/logger/logError";
+import { buildCircularResponseNotificationBody } from "./buildCircularResponseNotificationBody";
 
 export async function notifyCircularResponseSubmitted(params: {
   circularId: string;
@@ -14,15 +15,27 @@ export async function notifyCircularResponseSubmitted(params: {
 
   try {
     const admin = createSupabaseAdminClient();
-    const [{ data: circular }, { data: department }, publisherIds] = await Promise.all([
+    const [circularRes, departmentRes, publisherIds] = await Promise.all([
       admin
         .from("circulars")
         .select("created_by, ref_number, title")
         .eq("id", circularId)
+        .eq("school_id", schoolId)
         .maybeSingle(),
-      admin.from("departments").select("name").eq("id", departmentId).maybeSingle(),
+      admin
+        .from("departments")
+        .select("name")
+        .eq("id", departmentId)
+        .eq("school_id", schoolId)
+        .maybeSingle(),
       getSchoolPermissionHolderIds(schoolId, "circular.publish"),
     ]);
+    const lookupError = circularRes.error ?? departmentRes.error;
+    if (lookupError) {
+      logError(lookupError, { scope: "notifyCircularResponseSubmitted", circularId, schoolId });
+    }
+    const circular = circularRes.data;
+    const department = departmentRes.data;
 
     const recipientUserIds = Array.from(
       new Set(
@@ -36,12 +49,7 @@ export async function notifyCircularResponseSubmitted(params: {
       return;
     }
 
-    const body = JSON.stringify({
-      ref: (circular?.ref_number as string | undefined) ?? "",
-      title: (circular?.title as string | undefined) ?? "",
-      department: (department?.name as string | undefined) ?? "",
-      status,
-    });
+    const body = buildCircularResponseNotificationBody(circular, department, status);
 
     await dispatchModuleNotification({
       recipientUserIds,

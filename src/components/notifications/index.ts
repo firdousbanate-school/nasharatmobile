@@ -5,3 +5,4 @@ export { NotificationHeader } from "./NotificationHeader";
 export { NotificationBell } from "./NotificationBell";
 export { RealtimeNotificationListener } from "./RealtimeNotificationListener";
 export { BrowserNotificationBanner } from "./BrowserNotificationBanner";
+export { MarkEntityNotificationsRead } from "./MarkEntityNotificationsRead";

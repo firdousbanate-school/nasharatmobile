@@ -57,6 +57,24 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// Open (or focus) the app at the notification's target page when a system notification is tapped
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const rawUrl = (event.notification.data && event.notification.data.url) || "/notifications";
+  const target = new URL(rawUrl, self.location.origin);
+  if (target.origin !== self.location.origin) return;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      const client = windows.find((w) => new URL(w.url).origin === self.location.origin);
+      if (client) {
+        return client.focus().then((focused) => focused.navigate(target.href));
+      }
+      return self.clients.openWindow(target.href);
+    }),
+  );
+});
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);

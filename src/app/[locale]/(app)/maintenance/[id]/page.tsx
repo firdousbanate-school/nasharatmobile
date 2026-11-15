@@ -9,7 +9,6 @@ import { getMaintenanceRequestById } from "@/lib/maintenance/getMaintenanceReque
 import { getMaintenanceUpdates } from "@/lib/maintenance/getMaintenanceUpdates";
 import { getMaintenanceAttachments } from "@/lib/maintenance/getMaintenanceAttachments";
 import { getMaintenanceOperators } from "@/lib/maintenance/getMaintenanceOperators";
-import { markEntityNotificationsRead } from "@/lib/notifications/markEntityNotificationsRead";
 import { MaintenanceDetailCard } from "@/components/maintenance/MaintenanceDetailCard";
 import { MaintenanceAttachmentsList } from "@/components/maintenance/MaintenanceAttachmentsList";
 import { MaintenanceStatusActions } from "@/components/maintenance/MaintenanceStatusActions";
@@ -17,6 +16,7 @@ import { MaintenanceAssignSection } from "@/components/maintenance/MaintenanceAs
 import { MaintenanceTimeline } from "@/components/maintenance/MaintenanceTimeline";
 import { MaintenanceAddNoteBox } from "@/components/maintenance/MaintenanceAddNoteBox";
 import { SegmentedTabs } from "@/components/mobile";
+import { MarkEntityNotificationsRead } from "@/components/notifications";
 
 type MaintenanceDetailPageProps = { params: Promise<{ locale: string; id: string }> };
 
@@ -40,7 +40,6 @@ export default async function MaintenanceDetailPage({ params }: MaintenanceDetai
     getMaintenanceOperators(profile.school_id),
     hasPermission("maintenance.assign", profile.school_id).catch(() => false),
     hasPermission("maintenance.close", profile.school_id).catch(() => false),
-    markEntityNotificationsRead("maintenance_request", id),
   ]);
 
   const tMobile = await getTranslations("mobile");
@@ -50,6 +49,7 @@ export default async function MaintenanceDetailPage({ params }: MaintenanceDetai
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
+      <MarkEntityNotificationsRead entityType="maintenance_request" entityId={id} />
       <div className="hidden md:block">
         <Link href={`/${locale}/maintenance`}>
           <Button variant="ghost" size="sm" className="gap-2">

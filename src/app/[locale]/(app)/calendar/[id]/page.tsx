@@ -8,6 +8,7 @@ import { isPlatformOwner } from "@/lib/auth/isPlatformOwner";
 import { hasPermission } from "@/lib/rbac/hasPermission";
 import { getCalendarEventById } from "@/lib/calendar/getCalendarEventById";
 import { CalendarEventDetailCard } from "@/components/calendar/CalendarEventDetailCard";
+import { MarkEntityNotificationsRead } from "@/components/notifications";
 
 export default async function CalendarEventDetailPage({
   params,
@@ -36,6 +37,7 @@ export default async function CalendarEventDetailPage({
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
+      <MarkEntityNotificationsRead entityType="calendar_event" entityId={id} />
       <div className="hidden md:block">
         <Link href={`/${locale}/calendar`}>
           <Button variant="ghost" size="sm" className="gap-2">

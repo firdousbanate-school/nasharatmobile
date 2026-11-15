@@ -11,8 +11,8 @@ import { canRespondToCircular } from "@/lib/circulars/canRespondToCircular";
 import { getEffectivePermissions } from "@/lib/rbac/getEffectivePermissions";
 import { getSchoolDepartments } from "@/lib/school/getSchoolDepartments";
 import { getCircularDepartmentStatuses, getCircularPermissions } from "@/lib/circulars";
-import { markEntityNotificationsRead } from "@/lib/notifications/markEntityNotificationsRead";
 import { CircularDetailTabs } from "@/components/circulars";
+import { MarkEntityNotificationsRead } from "@/components/notifications";
 
 export default async function CircularDetailPage({
   params,
@@ -30,7 +30,6 @@ export default async function CircularDetailPage({
     getEffectivePermissions(profile?.school_id).catch((): string[] => []),
     getSchoolDepartments(profile?.school_id),
     isCurrentUserPlatformOwner(profile?.id),
-    markEntityNotificationsRead("circular", id),
   ]);
 
   if (!circular) {
@@ -47,6 +46,7 @@ export default async function CircularDetailPage({
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
+      <MarkEntityNotificationsRead entityType="circular" entityId={id} />
       <div className="hidden items-center gap-4 md:flex">
         <Link href="/circulars">
           <Button variant="ghost" size="icon" aria-label={t("backToList")}>
