@@ -51,7 +51,7 @@ test.describe.serial("primary workflows", () => {
 
     expect(data?.school_id).toBe(fx.schoolId);
     expect(data?.created_by).toBe(fx.admin.id);
-    expect(data?.status).toBe("draft");
+    expect(data?.status).toBe("published");
     expect(data?.ref_number).toMatch(/^CIR-\d{4}-\d{4}$/);
   });
 

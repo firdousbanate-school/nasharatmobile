@@ -4,10 +4,12 @@ import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
 import { buildCircularPublishBody } from "./buildCircularPublishBody";
 import { extractCircularTargetInfo, type CircularTargetRow } from "./extractCircularTargetInfo";
 import { getDepartmentMemberUserIds } from "./getDepartmentMemberUserIds";
+import { resolveCircularExtraRecipientIds } from "./resolveCircularExtraRecipientIds";
 
 /**
  * Notifies the heads and active members of the departments a circular targets
- * (never the publisher), including the circular's reference number and title when available.
+ * (or all active school members when the circular targets all departments),
+ * excluding the publisher, and includes the circular's reference number and title.
  */
 export async function notifyDepartmentHeadsOfPublish(
   supabase: SupabaseClient,
@@ -36,12 +38,12 @@ export async function notifyDepartmentHeadsOfPublish(
     (targets ?? []) as unknown as CircularTargetRow[],
   );
 
-  const memberIds =
-    departmentIds.length > 0
-      ? await getDepartmentMemberUserIds(supabase, schoolId, departmentIds)
-      : [];
+  const [memberIds, extraIds] = await Promise.all([
+    departmentIds.length > 0 ? getDepartmentMemberUserIds(supabase, schoolId, departmentIds) : [],
+    resolveCircularExtraRecipientIds(schoolId, departmentIds),
+  ]);
 
-  const recipientIds = Array.from(new Set([...headIds, ...memberIds])).filter(
+  const recipientIds = Array.from(new Set([...headIds, ...memberIds, ...extraIds])).filter(
     (id) => id !== publisherId,
   );
 

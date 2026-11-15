@@ -8,6 +8,7 @@ import { parseCalendarFormData } from "@/lib/validation/parseCalendarFormData";
 import { assertValidCalendarInput } from "@/lib/calendar/assertValidCalendarInput";
 import { computeRecurringEventInstances } from "@/lib/calendar/computeRecurringEventInstances";
 import { createCalendarEventSeries } from "@/lib/calendar/createCalendarEventSeries";
+import { notifyCalendarEventPublished } from "@/lib/calendar/notifyCalendarEventPublished";
 import { uploadCalendarImage } from "@/lib/calendar/uploadCalendarImage";
 import { ValidationError } from "@/lib/errors/ValidationError";
 import { DatabaseError } from "@/lib/errors/DatabaseError";
@@ -70,6 +71,13 @@ export async function createCalendarEventAction(
     if (!res.firstEventId) {
       throw new DatabaseError("Failed to create calendar event");
     }
+
+    await notifyCalendarEventPublished({
+      eventId: res.firstEventId,
+      schoolId: auth.schoolId,
+      publisherId: auth.profileId,
+      title: data.titleAr,
+    });
 
     revalidatePath("/[locale]/calendar", "page");
     revalidatePath("/[locale]", "page");

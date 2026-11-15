@@ -14,7 +14,15 @@ export async function insertCircularTargets(
   schoolId: string,
   departmentIds: string[],
 ): Promise<{ error?: string }> {
-  const uniqueIds = [...new Set(departmentIds)];
+  let uniqueIds = [...new Set(departmentIds)];
+  if (uniqueIds.length === 0) {
+    const { data: depts } = await supabase
+      .from("departments")
+      .select("id")
+      .eq("school_id", schoolId)
+      .eq("is_active", true);
+    uniqueIds = (depts ?? []).map((d) => d.id as string).filter(Boolean);
+  }
   if (uniqueIds.length === 0) return {};
 
   const targets = uniqueIds.map((deptId) => ({

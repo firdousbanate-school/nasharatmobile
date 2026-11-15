@@ -23,6 +23,7 @@ export async function createCalendarEventSeries(
     return { error: "No event occurrences specified" };
   }
 
+  const publishedAt = new Date().toISOString();
   const rows = params.instances.map((inst) => ({
     school_id: params.schoolId,
     title_ar: params.titleAr,
@@ -33,7 +34,8 @@ export async function createCalendarEventSeries(
     ends_at: inst.endsAt,
     all_day: params.allDay,
     visibility: params.visibility,
-    status: "draft",
+    status: "published",
+    published_at: publishedAt,
     location: params.location,
     image_path: params.imagePath,
     created_by: params.createdBy,

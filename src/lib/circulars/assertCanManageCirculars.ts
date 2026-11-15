@@ -8,6 +8,7 @@ export type ManageCircularAuthResult =
       authorized: true;
       profileId: string;
       schoolId: string;
+      canPublish?: boolean;
       error?: never;
     }
   | {
@@ -15,6 +16,7 @@ export type ManageCircularAuthResult =
       error: string;
       profileId?: never;
       schoolId?: never;
+      canPublish?: never;
     };
 
 export async function assertCanManageCirculars(): Promise<ManageCircularAuthResult> {
@@ -26,9 +28,9 @@ export async function assertCanManageCirculars(): Promise<ManageCircularAuthResu
 
   const perms = await getEffectivePermissions(schoolId);
   const isOwner = await isPlatformOwner(profile.id);
-  const canManage =
-    isOwner || perms.includes("circular.create") || perms.includes("circular.publish");
+  const canPublish = isOwner || perms.includes("circular.publish");
+  const canManage = canPublish || perms.includes("circular.create");
   if (!canManage) return { authorized: false, error: "Unauthorized" };
 
-  return { authorized: true, profileId: profile.id, schoolId };
+  return { authorized: true, profileId: profile.id, schoolId, canPublish };
 }

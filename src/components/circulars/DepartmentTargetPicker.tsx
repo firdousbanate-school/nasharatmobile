@@ -19,9 +19,8 @@ export function DepartmentTargetPicker({
   initialSelectedIds?: string[];
 }) {
   const t = useTranslations("circulars");
-  const [selectedIds, setSelectedIds] = useState<string[]>(initialSelectedIds ?? []);
-
   const allDeptIds = departments.map((d) => d.id);
+  const [selectedIds, setSelectedIds] = useState<string[]>(initialSelectedIds ?? allDeptIds);
   const isAllSelected = departments.length > 0 && selectedIds.length === departments.length;
 
   const handleToggleAll = () => {

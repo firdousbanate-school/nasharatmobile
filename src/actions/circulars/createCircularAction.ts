@@ -8,6 +8,8 @@ import { createCircularRecord } from "@/lib/circulars/createCircularRecord";
 import { handleCircularDocumentsUpload } from "@/lib/circulars/handleCircularDocumentsUpload";
 import { assertValidCircularDocuments } from "@/lib/circulars/assertValidCircularDocuments";
 import { assertCanManageCirculars } from "@/lib/circulars/assertCanManageCirculars";
+import { notifyDepartmentHeadsOfPublish } from "@/lib/circulars/notifyDepartmentHeadsOfPublish";
+import { logError } from "@/lib/logger/logError";
 import { ForbiddenError } from "@/lib/errors/ForbiddenError";
 import { ValidationError } from "@/lib/errors/ValidationError";
 import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
@@ -42,6 +44,7 @@ export async function createCircularAction(
       responseType,
       dueAt,
       createdBy: auth.profileId,
+      canPublish: auth.canPublish,
     });
 
     if (!res.circularId) {
@@ -69,6 +72,18 @@ export async function createCircularAction(
     });
     if (uploadRes.error) {
       throw mapDatabaseError(uploadRes.error, "Failed to upload circular documents");
+    }
+
+    if (auth.canPublish !== false) {
+      await notifyDepartmentHeadsOfPublish(supabase, {
+        circularId: res.circularId,
+        schoolId: auth.schoolId,
+        publisherId: auth.profileId,
+        circularRef: res.refNumber,
+        circularTitle: title,
+      }).catch((err: unknown) => {
+        logError(err, { scope: "createCircularAction.notify", circularId: res.circularId });
+      });
     }
 
     revalidatePath("/[locale]/circulars", "page");
