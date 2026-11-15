@@ -24,11 +24,11 @@ vi.mock("sonner", () => ({
 }));
 
 const mockRemoveChannel = vi.fn().mockResolvedValue("ok");
-let postgresChangesHandler: ((payload: unknown) => void) | null = null;
+const handlers: Record<string, (payload: unknown) => void> = {};
 
 const mockChannel = {
-  on: vi.fn().mockImplementation((_type, _filter, callback) => {
-    postgresChangesHandler = callback;
+  on: vi.fn().mockImplementation((_type, filter: { event: string }, callback) => {
+    handlers[filter.event] = callback;
     return mockChannel;
   }),
   subscribe: vi.fn().mockReturnThis(),
@@ -50,7 +50,9 @@ vi.mock("@/lib/supabase/createSupabaseBrowserClient", () => ({
 describe("RealtimeNotificationListener", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    postgresChangesHandler = null;
+    for (const key of Object.keys(handlers)) {
+      delete handlers[key];
+    }
   });
 
   it("subscribes to realtime channel on mount and removes on unmount", () => {
@@ -75,8 +77,8 @@ describe("RealtimeNotificationListener", () => {
   it("triggers toast and router.refresh when notification payload is received", () => {
     render(<RealtimeNotificationListener userId="usr-123" />);
 
-    expect(postgresChangesHandler).not.toBeNull();
-    postgresChangesHandler!({
+    expect(handlers.INSERT).toBeDefined();
+    handlers.INSERT!({
       new: {
         id: "notif-1",
         user_id: "usr-123",
@@ -104,5 +106,9 @@ describe("RealtimeNotificationListener", () => {
     expect(mockMarkRead).toHaveBeenCalledWith("notif-1");
     expect(mockPush).toHaveBeenCalledWith("/circulars/circ-456");
     expect(mockRefresh).toHaveBeenCalled();
+
+    mockRefresh.mockClear();
+    handlers.UPDATE?.({});
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 });

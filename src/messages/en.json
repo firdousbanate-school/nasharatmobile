@@ -637,12 +637,25 @@
     "unread": "Unread",
     "markAllRead": "Mark all as read",
     "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "delete": "Delete notification",
+    "viewAll": "View all",
     "viewDetails": "View Details",
     "newNotification": "New notification",
     "view": "View",
     "empty": "No notifications yet",
     "emptyDesc": "You are all caught up! New alerts and tasks will appear here.",
     "showMore": "Show more",
+    "groups": {
+      "today": "Today",
+      "earlier": "Earlier"
+    },
+    "preferences": {
+      "title": "Notification Preferences",
+      "subtitle": "Choose which alerts you receive in-app or via background push notifications",
+      "inApp": "In-App",
+      "push": "Push"
+    },
     "browserPermission": {
       "promptTitle": "Enable Background Browser Alerts",
       "promptDesc": "Allow browser notifications so you receive instant alerts even when the app is in the background.",
@@ -673,7 +686,8 @@
       "circular_response_submitted": {
         "title": "Department Circular Response Submitted",
         "body": "A department has submitted its response to an administrative circular",
-        "bodyWithDetails": "{department} submitted a response to circular #{ref} ({title})"
+        "bodyWithDetails": "{department} submitted a response to circular #{ref} ({title})",
+        "bodyGrouped": "{count} departments submitted responses to circular #{ref} ({title})"
       },
       "circular_reminder": {
         "title": "Urgent Reminder: Circular Response",

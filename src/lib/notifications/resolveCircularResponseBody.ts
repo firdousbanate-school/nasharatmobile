@@ -6,11 +6,25 @@ export function resolveCircularResponseBody(
   parsed: NotificationJsonBody | null,
   t: Translator,
 ): string {
-  if (parsed?.department && parsed?.ref && parsed?.title) {
+  const ref = parsed?.ref;
+  const title = parsed?.title;
+  if (!ref || !title) {
+    return t("templates.circular_response_submitted.body");
+  }
+
+  if (parsed.count && parsed.count > 1) {
+    return t("templates.circular_response_submitted.bodyGrouped", {
+      count: parsed.count,
+      ref,
+      title,
+    });
+  }
+
+  if (parsed.department) {
     return t("templates.circular_response_submitted.bodyWithDetails", {
       department: parsed.department,
-      ref: parsed.ref,
-      title: parsed.title,
+      ref,
+      title,
     });
   }
 

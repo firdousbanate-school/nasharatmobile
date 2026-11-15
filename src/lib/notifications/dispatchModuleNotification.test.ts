@@ -1,12 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { mockBatchInsert, mockAdminFrom } = vi.hoisted(() => ({
+const { mockBatchInsert, mockAdminFrom, mockSendPush } = vi.hoisted(() => ({
   mockBatchInsert: vi.fn(),
   mockAdminFrom: vi.fn(),
+  mockSendPush: vi.fn().mockResolvedValue(0),
 }));
 
 vi.mock("@/lib/supabase", () => ({
   createSupabaseAdminClient: () => ({ from: mockAdminFrom }),
+}));
+
+vi.mock("./filterRecipientsByPreferences", () => ({
+  filterRecipientsByPreferences: (_c: unknown, ids: string[]) =>
+    Promise.resolve({ inAppUserIds: ids, pushUserIds: ids }),
+}));
+
+vi.mock("./sendWebPushNotifications", () => ({
+  sendWebPushNotifications: (...args: unknown[]) => mockSendPush(...args),
 }));
 
 vi.mock("./insertBatchNotificationRecords", () => ({

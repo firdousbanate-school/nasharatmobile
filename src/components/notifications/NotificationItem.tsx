@@ -2,17 +2,21 @@
 
 import { useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n";
+import { useRouter } from "@/i18n";
 import { toast } from "sonner";
-import { CheckIcon, ExternalLinkIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { NotificationBadge } from "./NotificationBadge";
+import { NotificationItemActions } from "./NotificationItemActions";
 import { resolveNotificationHref } from "@/lib/notifications/resolveNotificationHref";
 import { resolveNotificationText } from "@/lib/notifications/resolveNotificationText";
-import { markNotificationReadAction } from "@/actions/notifications/markNotificationReadAction";
 import type { NotificationRow } from "@/lib/notifications/types";
 
-export function NotificationItem({ notification }: { notification: NotificationRow }) {
+export function NotificationItem({
+  notification,
+  onMutated,
+}: {
+  notification: NotificationRow;
+  onMutated?: () => void;
+}) {
   const t = useTranslations("notifications");
   const tCommon = useTranslations("common");
   const locale = useLocale();
@@ -24,17 +28,14 @@ export function NotificationItem({ notification }: { notification: NotificationR
   const content = resolveNotificationText(notification, t);
   const formattedDate = new Date(notification.created_at).toLocaleString(
     locale === "ar" ? "ar-EG" : "en-US",
-    {
-      dateStyle: "medium",
-      timeStyle: "short",
-    },
+    { dateStyle: "medium", timeStyle: "short" },
   );
 
-  const handleMarkRead = () => {
+  const runAction = (action: () => Promise<{ success: boolean; error?: string }>) => {
     startTransition(async () => {
-      const res = await markNotificationReadAction(notification.id);
+      const res = await action();
       if (res.success) {
-        toast.success(tCommon("saved"));
+        onMutated?.();
         router.refresh();
       } else {
         toast.error(res.error ?? tCommon("error"));
@@ -62,28 +63,13 @@ export function NotificationItem({ notification }: { notification: NotificationR
         )}
       </div>
 
-      <div className="flex items-center gap-2 self-end sm:self-center">
-        {isUnread && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleMarkRead}
-            disabled={isPending}
-            className="gap-1 text-xs"
-          >
-            <CheckIcon className="size-3.5" />
-            <span>{t("markRead")}</span>
-          </Button>
-        )}
-        {href && (
-          <Link href={href} onClick={() => void markNotificationReadAction(notification.id)}>
-            <Button variant="outline" size="sm" className="gap-1 text-xs">
-              <span>{t("viewDetails")}</span>
-              <ExternalLinkIcon className="size-3.5" />
-            </Button>
-          </Link>
-        )}
-      </div>
+      <NotificationItemActions
+        notificationId={notification.id}
+        isUnread={isUnread}
+        href={href}
+        isPending={isPending}
+        onRunAction={runAction}
+      />
     </div>
   );
 }

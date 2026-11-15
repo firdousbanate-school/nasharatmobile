@@ -4,6 +4,7 @@ export interface NotificationJsonBody {
   status?: string;
   priority?: string;
   department?: string;
+  count?: number;
 }
 
 export function parseNotificationJsonBody(body: string | null): NotificationJsonBody | null {

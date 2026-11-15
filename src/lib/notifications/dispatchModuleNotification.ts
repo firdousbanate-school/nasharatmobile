@@ -1,6 +1,8 @@
 import { createSupabaseAdminClient } from "@/lib/supabase";
 import { logError } from "@/lib/logger/logError";
+import { filterRecipientsByPreferences } from "./filterRecipientsByPreferences";
 import { insertBatchNotificationRecords } from "./insertBatchNotificationRecords";
+import { sendWebPushNotifications } from "./sendWebPushNotifications";
 import type { NotificationType, NotificationEntityKind } from "./types";
 
 export type DispatchNotificationResult = {
@@ -8,7 +10,7 @@ export type DispatchNotificationResult = {
 };
 
 /**
- * Writes in-app notifications for a set of recipients.
+ * Writes in-app notifications and dispatches Web Push for a set of recipients.
  *
  * Notifications are inserted with the service-role client, so RLS cannot
  * constrain `user_id`. Recipients are therefore resolved against `profiles`
@@ -37,8 +39,7 @@ export async function dispatchModuleNotification({
   skipThrottle?: boolean;
 }): Promise<DispatchNotificationResult> {
   const uniqueUserIds = Array.from(new Set(recipientUserIds.filter(Boolean)));
-  if (!uniqueUserIds.length) return { delivered: 0 };
-  if (!schoolId) return { delivered: 0 };
+  if (!uniqueUserIds.length || !schoolId) return { delivered: 0 };
 
   try {
     const adminClient = createSupabaseAdminClient();
@@ -57,16 +58,34 @@ export async function dispatchModuleNotification({
     const allowedIds = (members ?? []).map((member) => member.id as string);
     if (!allowedIds.length) return { delivered: 0 };
 
-    const delivered = await insertBatchNotificationRecords(adminClient, {
-      userIds: allowedIds,
-      schoolId,
+    const { inAppUserIds, pushUserIds } = await filterRecipientsByPreferences(
+      adminClient,
+      allowedIds,
       type,
-      title,
-      body,
-      entityType,
-      entityId,
-      skipThrottle,
-    });
+    );
+
+    const [delivered] = await Promise.all([
+      inAppUserIds.length > 0
+        ? insertBatchNotificationRecords(adminClient, {
+            userIds: inAppUserIds,
+            schoolId,
+            type,
+            title,
+            body,
+            entityType,
+            entityId,
+            skipThrottle,
+          })
+        : Promise.resolve(0),
+      sendWebPushNotifications(adminClient, {
+        userIds: pushUserIds,
+        schoolId,
+        title,
+        body,
+        entityType,
+        entityId,
+      }),
+    ]);
 
     return { delivered };
   } catch (error) {

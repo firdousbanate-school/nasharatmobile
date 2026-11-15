@@ -6,3 +6,4 @@ export { NotificationBell } from "./NotificationBell";
 export { RealtimeNotificationListener } from "./RealtimeNotificationListener";
 export { BrowserNotificationBanner } from "./BrowserNotificationBanner";
 export { MarkEntityNotificationsRead } from "./MarkEntityNotificationsRead";
+export { NotificationPreferencesCard } from "./NotificationPreferencesCard";

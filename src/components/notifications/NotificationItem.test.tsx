@@ -34,6 +34,14 @@ vi.mock("@/actions/notifications/markNotificationReadAction", () => ({
   markNotificationReadAction: vi.fn(),
 }));
 
+vi.mock("@/actions/notifications/markNotificationUnreadAction", () => ({
+  markNotificationUnreadAction: vi.fn(),
+}));
+
+vi.mock("@/actions/notifications/deleteNotificationAction", () => ({
+  deleteNotificationAction: vi.fn(),
+}));
+
 describe("NotificationItem", () => {
   it("renders localized title and body for canonical template key", () => {
     const notification: NotificationRow = {

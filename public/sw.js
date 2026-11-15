@@ -57,6 +57,34 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// Display Web Push notifications received while the app is closed or in the background
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  let payload = { title: "Nasharat", body: "", url: "/notifications", tag: "nasharat-push" };
+  try {
+    const parsed = event.data.json();
+    payload = {
+      title: parsed.title || payload.title,
+      body: parsed.body || "",
+      url: parsed.url || "/notifications",
+      tag: parsed.tag || payload.tag,
+    };
+  } catch {
+    payload.body = event.data.text();
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: "/icons/icon-192x192.png",
+      badge: "/icons/icon-192x192.png",
+      tag: payload.tag,
+      data: { url: payload.url },
+    }),
+  );
+});
+
 // Open (or focus) the app at the notification's target page when a system notification is tapped
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();

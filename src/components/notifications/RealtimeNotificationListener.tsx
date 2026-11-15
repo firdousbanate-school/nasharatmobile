@@ -59,6 +59,30 @@ export function RealtimeNotificationListener({ userId }: { userId: string }) {
           router.refresh();
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          router.refresh();
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          router.refresh();
+        },
+      )
       .subscribe();
 
     return () => {

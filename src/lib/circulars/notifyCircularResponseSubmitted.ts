@@ -1,8 +1,9 @@
 import { createSupabaseAdminClient } from "@/lib/supabase";
 import { dispatchModuleNotification } from "@/lib/notifications/dispatchModuleNotification";
-import { getSchoolPermissionHolderIds } from "@/lib/maintenance/getSchoolPermissionHolderIds";
 import { logError } from "@/lib/logger/logError";
 import { buildCircularResponseNotificationBody } from "./buildCircularResponseNotificationBody";
+import { fetchCircularResponseContext } from "./fetchCircularResponseContext";
+import { updateExistingResponseNotifications } from "./updateExistingResponseNotifications";
 
 export async function notifyCircularResponseSubmitted(params: {
   circularId: string;
@@ -15,48 +16,32 @@ export async function notifyCircularResponseSubmitted(params: {
 
   try {
     const admin = createSupabaseAdminClient();
-    const [circularRes, departmentRes, publisherIds] = await Promise.all([
-      admin
-        .from("circulars")
-        .select("created_by, ref_number, title")
-        .eq("id", circularId)
-        .eq("school_id", schoolId)
-        .maybeSingle(),
-      admin
-        .from("departments")
-        .select("name")
-        .eq("id", departmentId)
-        .eq("school_id", schoolId)
-        .maybeSingle(),
-      getSchoolPermissionHolderIds(schoolId, "circular.publish"),
-    ]);
-    const lookupError = circularRes.error ?? departmentRes.error;
-    if (lookupError) {
-      logError(lookupError, { scope: "notifyCircularResponseSubmitted", circularId, schoolId });
-    }
-    const circular = circularRes.data;
-    const department = departmentRes.data;
+    const { circular, department, recipientUserIds } = await fetchCircularResponseContext(admin, {
+      circularId,
+      schoolId,
+      departmentId,
+      actorUserId,
+    });
 
-    const recipientUserIds = Array.from(
-      new Set(
-        [circular?.created_by as string | undefined, ...publisherIds].filter((id): id is string =>
-          Boolean(id),
-        ),
-      ),
-    ).filter((id) => id !== actorUserId);
+    if (recipientUserIds.length === 0) return;
 
-    if (recipientUserIds.length === 0) {
-      return;
-    }
+    const remainingUserIds = await updateExistingResponseNotifications(admin, {
+      recipientUserIds,
+      circularId,
+      ref: (circular?.ref_number as string | undefined) ?? "",
+      title: (circular?.title as string | undefined) ?? "",
+      department: (department?.name as string | undefined) ?? "",
+      status,
+    });
 
-    const body = buildCircularResponseNotificationBody(circular, department, status);
+    if (remainingUserIds.length === 0) return;
 
     await dispatchModuleNotification({
-      recipientUserIds,
+      recipientUserIds: remainingUserIds,
       schoolId,
       type: "circular",
       title: "circular_response_submitted",
-      body,
+      body: buildCircularResponseNotificationBody(circular, department, status),
       entityType: "circular",
       entityId: circularId,
       skipThrottle: true,

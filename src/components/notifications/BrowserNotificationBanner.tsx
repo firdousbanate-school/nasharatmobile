@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { BellRingIcon, SettingsIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import {
   getBrowserNotificationState,
   type BrowserNotificationState,
 } from "@/lib/notifications/getBrowserNotificationState";
+import { subscribeToWebPush } from "@/lib/notifications/subscribeToWebPush";
 
 export function BrowserNotificationBanner() {
   const t = useTranslations("notifications.browserPermission");
@@ -20,6 +21,13 @@ export function BrowserNotificationBanner() {
   const [dismissed, setDismissed] = useState(false);
 
   const state = overrideState ?? browserState;
+
+  useEffect(() => {
+    if (state === "granted") {
+      void subscribeToWebPush();
+    }
+  }, [state]);
+
   if (dismissed || state === "unsupported" || state === "granted") {
     return null;
   }
@@ -30,6 +38,9 @@ export function BrowserNotificationBanner() {
     if (typeof window === "undefined" || !("Notification" in window)) return;
     const nextState = await Notification.requestPermission();
     setOverrideState(nextState);
+    if (nextState === "granted") {
+      void subscribeToWebPush();
+    }
   };
 
   return (
