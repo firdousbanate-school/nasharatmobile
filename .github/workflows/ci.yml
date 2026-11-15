@@ -38,6 +38,7 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: supabase start
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
@@ -54,6 +55,7 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: supabase start
       # Proves 0001 → latest applies from an empty database, not just on top of
       # an already-migrated local volume.
