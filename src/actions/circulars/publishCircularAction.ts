@@ -33,7 +33,7 @@ export async function publishCircularAction(circularId: string): Promise<ActionR
       })
       .eq("id", circularId)
       .eq("school_id", profile.school_id)
-      .select("id");
+      .select("id, ref_number, title");
 
     if (error) {
       throw mapDatabaseError(error);
@@ -43,10 +43,18 @@ export async function publishCircularAction(circularId: string): Promise<ActionR
       throw new NotFoundError("Circular not found");
     }
 
+    const publishedRow = updated[0] as {
+      id: string;
+      ref_number?: string | null;
+      title?: string | null;
+    };
+
     await notifyDepartmentHeadsOfPublish(supabase, {
       circularId,
       schoolId: profile.school_id,
       publisherId: profile.id,
+      circularRef: publishedRow.ref_number,
+      circularTitle: publishedRow.title,
     });
 
     revalidatePath("/[locale]/circulars", "page");

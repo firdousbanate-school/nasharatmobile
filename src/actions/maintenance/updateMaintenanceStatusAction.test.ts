@@ -8,6 +8,7 @@ const m = vi.hoisted(() => ({
   isLegal: vi.fn(),
   assertTransition: vi.fn(),
   apply: vi.fn(),
+  notifyStatus: vi.fn(),
   revalidate: vi.fn(),
 }));
 
@@ -29,11 +30,19 @@ vi.mock("@/lib/maintenance/assertCanTransitionStatus", () => ({
 vi.mock("@/lib/maintenance/applyMaintenanceStatusChange", () => ({
   applyMaintenanceStatusChange: m.apply,
 }));
+vi.mock("@/lib/maintenance/notifyMaintenanceStatusUpdated", () => ({
+  notifyMaintenanceStatusUpdated: m.notifyStatus,
+}));
 
 import { updateMaintenanceStatusAction } from "./updateMaintenanceStatusAction";
 
 const form = new FormData();
-const ticket = { status: "open", reporter_id: "rep-1", assigned_operator_id: "op-1" };
+const ticket = {
+  status: "open",
+  reporter_id: "rep-1",
+  assigned_operator_id: "op-1",
+  title: "Broken Light",
+};
 
 describe("updateMaintenanceStatusAction", () => {
   beforeEach(() => {
@@ -50,6 +59,7 @@ describe("updateMaintenanceStatusAction", () => {
     m.hasPermission.mockResolvedValue(false);
     m.assertTransition.mockReturnValue({ ok: true });
     m.apply.mockResolvedValue(undefined);
+    m.notifyStatus.mockResolvedValue(undefined);
   });
 
   it("requires a profile with a school", async () => {
@@ -104,7 +114,7 @@ describe("updateMaintenanceStatusAction", () => {
     expect(m.revalidate).not.toHaveBeenCalled();
   });
 
-  it("applies the change with the caller's school and user, then refreshes both pages", async () => {
+  it("applies the change with the caller's school and user, notifies stakeholders, then refreshes both pages", async () => {
     const res = await updateMaintenanceStatusAction(form);
 
     expect(res).toEqual({ success: true });
@@ -114,6 +124,15 @@ describe("updateMaintenanceStatusAction", () => {
       userId: "op-1",
       targetStatus: "in_progress",
       oldStatus: "open",
+    });
+    expect(m.notifyStatus).toHaveBeenCalledWith({
+      requestId: "t-1",
+      schoolId: "s-1",
+      actorId: "op-1",
+      reporterId: "rep-1",
+      assignedOperatorId: "op-1",
+      targetStatus: "in_progress",
+      title: "Broken Light",
     });
     expect(m.revalidate).toHaveBeenCalledWith("/[locale]/maintenance/t-1", "page");
   });

@@ -24,13 +24,20 @@ vi.mock("@/lib/supabase", () => ({
 
 import { publishCircularAction } from "./publishCircularAction";
 
-function setupTables(updateResult: object = { data: [{ id: "c-1" }] }, targetsResult = {}) {
+function setupTables(
+  updateResult: object = { data: [{ id: "c-1" }] },
+  targetsResult = {},
+  profilesResult = {},
+) {
   const update = createQueryChain(updateResult);
   const targets = createQueryChain({ data: [], ...targetsResult });
-  mockFrom.mockImplementation((table: string) =>
-    table === "circulars" ? update.chain : targets.chain,
-  );
-  return { update, targets };
+  const profiles = createQueryChain({ data: [], ...profilesResult });
+  mockFrom.mockImplementation((table: string) => {
+    if (table === "circulars") return update.chain;
+    if (table === "profiles") return profiles.chain;
+    return targets.chain;
+  });
+  return { update, targets, profiles };
 }
 
 describe("publishCircularAction", () => {
@@ -69,25 +76,29 @@ describe("publishCircularAction", () => {
     expect(mockRevalidate).toHaveBeenCalledWith("/[locale]/circulars", "page");
   });
 
-  it("notifies department heads except the publisher", async () => {
+  it("notifies department heads and target department members except the publisher with circular ref/title", async () => {
     setupTables(
-      { data: [{ id: "c-1" }] },
+      { data: [{ id: "c-1", ref_number: "2026/09", title: "Safety Drill" }] },
       {
         data: [
-          { department: { head_profile_id: "head-1" } },
-          { department: { head_profile_id: "me" } },
-          { department: { head_profile_id: null } },
+          { department_id: "dept-1", department: { head_profile_id: "head-1" } },
+          { department_id: "dept-2", department: { head_profile_id: "me" } },
+          { department_id: "dept-2", department: { head_profile_id: null } },
           { department: null },
         ],
+      },
+      {
+        data: [{ id: "staff-1" }, { id: "head-1" }, { id: "me" }],
       },
     );
     await publishCircularAction("c-1");
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockDispatch.mock.calls[0][0]).toMatchObject({
-      recipientUserIds: ["head-1"],
+      recipientUserIds: ["head-1", "staff-1"],
       schoolId: "school-1",
       entityId: "c-1",
+      body: JSON.stringify({ ref: "2026/09", title: "Safety Drill" }),
     });
   });
 

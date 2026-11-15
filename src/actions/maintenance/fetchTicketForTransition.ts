@@ -9,6 +9,7 @@ export interface TransitionTicket {
   status: MaintenanceStatus;
   reporter_id: string;
   assigned_operator_id: string | null;
+  title?: string | null;
 }
 
 export async function fetchTicketForTransition(
@@ -17,7 +18,7 @@ export async function fetchTicketForTransition(
 ): Promise<TransitionTicket> {
   const { data: ticket, error: ticketError } = await supabase
     .from("maintenance_requests")
-    .select("id, school_id, status, reporter_id, assigned_operator_id")
+    .select("id, school_id, status, reporter_id, assigned_operator_id, title")
     .eq("id", requestId)
     .maybeSingle();
 

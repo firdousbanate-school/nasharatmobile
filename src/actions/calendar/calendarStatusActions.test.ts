@@ -4,12 +4,16 @@ import { createQueryChain } from "@/test-utils/createQueryChain";
 const m = vi.hoisted(() => ({
   assertCan: vi.fn(),
   from: vi.fn(),
+  notifyCalendar: vi.fn(),
   revalidate: vi.fn(),
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: m.revalidate }));
 vi.mock("@/lib/logger/logError", () => ({ logError: vi.fn() }));
 vi.mock("@/lib/calendar/assertCanManageCalendar", () => ({ assertCanManageCalendar: m.assertCan }));
+vi.mock("@/lib/calendar/notifyCalendarEventPublished", () => ({
+  notifyCalendarEventPublished: m.notifyCalendar,
+}));
 vi.mock("@/lib/supabase", () => ({
   createSupabaseServerClient: vi.fn().mockResolvedValue({ from: m.from }),
 }));
@@ -27,7 +31,8 @@ const cases = [
 describe.each(cases)("$name calendar event action", ({ run, status }) => {
   beforeEach(() => {
     vi.clearAllMocks();
-    m.assertCan.mockResolvedValue({ schoolId: "s-1" });
+    m.assertCan.mockResolvedValue({ schoolId: "s-1", profileId: "p-1" });
+    m.notifyCalendar.mockResolvedValue(undefined);
   });
 
   it("stops at the permission check without touching the database", async () => {
@@ -40,7 +45,7 @@ describe.each(cases)("$name calendar event action", ({ run, status }) => {
   });
 
   it(`sets the status to ${status} only for an event of the caller's school`, async () => {
-    const update = createQueryChain({ data: [{ id: "e-1" }] });
+    const update = createQueryChain({ data: [{ id: "e-1", title_ar: "اجتماع" }] });
     m.from.mockReturnValue(update.chain);
     const res = await run("e-1");
 
@@ -50,6 +55,16 @@ describe.each(cases)("$name calendar event action", ({ run, status }) => {
     expect(updateCall?.[1]).toMatchObject({ status });
     expect(update.calls).toContainEqual(["eq", "id", "e-1"]);
     expect(update.calls).toContainEqual(["eq", "school_id", "s-1"]);
+    if (status === "published") {
+      expect(m.notifyCalendar).toHaveBeenCalledWith({
+        eventId: "e-1",
+        schoolId: "s-1",
+        publisherId: "p-1",
+        title: "اجتماع",
+      });
+    } else {
+      expect(m.notifyCalendar).not.toHaveBeenCalled();
+    }
     expect(m.revalidate).toHaveBeenCalledWith("/[locale]/calendar", "page");
     expect(m.revalidate).toHaveBeenCalledWith("/[locale]/calendar/e-1", "page");
   });

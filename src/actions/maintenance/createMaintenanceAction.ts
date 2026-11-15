@@ -8,6 +8,7 @@ import { createMaintenanceRecord } from "@/lib/maintenance/createMaintenanceReco
 import { insertMaintenanceUpdate } from "@/lib/maintenance/insertMaintenanceUpdate";
 import { handleOptionalPhoto } from "@/lib/maintenance/handleOptionalPhoto";
 import { assertValidMaintenancePhoto } from "@/lib/maintenance/assertValidMaintenancePhoto";
+import { notifyMaintenanceCreated } from "@/lib/maintenance/notifyMaintenanceCreated";
 import { ValidationError } from "@/lib/errors/ValidationError";
 import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
 import { sanitizeError } from "@/lib/errors/sanitizeError";
@@ -65,6 +66,14 @@ export async function createMaintenanceAction(
       oldValue: null,
       newValue: "submitted",
       reason: priority === "emergency" ? "Emergency ticket submitted" : "Ticket submitted",
+    });
+
+    await notifyMaintenanceCreated({
+      requestId,
+      schoolId: auth.schoolId,
+      reporterId: auth.profileId,
+      title,
+      priority,
     });
 
     revalidatePath("/[locale]/maintenance", "page");

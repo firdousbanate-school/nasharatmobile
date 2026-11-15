@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase";
 import { assertCanManageCalendar } from "@/lib/calendar/assertCanManageCalendar";
+import { notifyCalendarEventPublished } from "@/lib/calendar/notifyCalendarEventPublished";
 import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
 import { sanitizeError } from "@/lib/errors/sanitizeError";
 import { formatActionErrorResult, type ActionResult } from "@/lib/errors/formatActionErrorResult";
@@ -21,7 +22,7 @@ export async function publishCalendarEventAction(eventId: string): Promise<Actio
       })
       .eq("id", eventId)
       .eq("school_id", auth.schoolId)
-      .select("id");
+      .select("id, title_ar, title_en");
 
     if (error) {
       throw mapDatabaseError(error);
@@ -30,6 +31,19 @@ export async function publishCalendarEventAction(eventId: string): Promise<Actio
     if (!updated || updated.length === 0) {
       throw new NotFoundError("Event not found");
     }
+
+    const publishedRow = updated[0] as {
+      id: string;
+      title_ar?: string | null;
+      title_en?: string | null;
+    };
+
+    await notifyCalendarEventPublished({
+      eventId,
+      schoolId: auth.schoolId,
+      publisherId: auth.profileId,
+      title: publishedRow.title_ar || publishedRow.title_en || null,
+    });
 
     revalidatePath("/[locale]/calendar", "page");
     revalidatePath(`/[locale]/calendar/${eventId}`, "page");

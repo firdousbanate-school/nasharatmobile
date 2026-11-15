@@ -651,7 +651,8 @@
     "templates": {
       "circular_published": {
         "title": "New Administrative Circular",
-        "body": "A new administrative circular has been published requiring your department's review and response"
+        "body": "A new administrative circular has been published requiring your department's review and response",
+        "bodyWithRef": "New administrative circular #{ref} ({title}) has been published for your department"
       },
       "circular_reminder": {
         "title": "Urgent Reminder: Circular Response",
@@ -661,6 +662,22 @@
       "maintenance_assigned": {
         "title": "New Maintenance Request Assigned to You",
         "body": "A maintenance request has been assigned to you for follow-up and completion"
+      },
+      "maintenance_created": {
+        "title": "New Maintenance Request Submitted",
+        "body": "A new maintenance request has been submitted and awaits assignment",
+        "bodyWithTitle": "New maintenance request submitted: {title}"
+      },
+      "maintenance_status_updated": {
+        "title": "Maintenance Request Status Updated",
+        "body": "The status of a maintenance request has been updated",
+        "bodyWithStatus": "Maintenance request status changed to: {status}",
+        "bodyWithTitle": "Maintenance request ({title}) status changed to: {status}"
+      },
+      "calendar_published": {
+        "title": "New School Calendar Event",
+        "body": "A new event has been published on the school calendar",
+        "bodyWithTitle": "New event published on the school calendar: {title}"
       }
     }
   },

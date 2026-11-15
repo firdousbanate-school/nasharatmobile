@@ -1,4 +1,5 @@
 import { resolveReminderBody } from "./resolveReminderBody";
+import { resolveTemplateNotification } from "./resolveTemplateNotification";
 
 type NotificationLike = {
   title: string;
@@ -8,31 +9,28 @@ type NotificationLike = {
 
 type Translator = (key: string, values?: Record<string, string | number>) => string;
 
+const LEGACY_TITLE_MAP: Record<string, string> = {
+  "تعميم إداري جديد": "circular_published",
+  "تذكير عاجل: استجابة تعميم إداري": "circular_reminder",
+  "تم إسناد بلاغ صيانة جديد لك": "maintenance_assigned",
+};
+
 export function resolveNotificationText(
   notification: NotificationLike,
   t: Translator,
 ): { title: string; body: string | null } {
-  const rawTitle = notification.title;
+  const templateKey = LEGACY_TITLE_MAP[notification.title] ?? notification.title;
 
-  if (rawTitle === "circular_published" || rawTitle === "تعميم إداري جديد") {
-    return {
-      title: t("templates.circular_published.title"),
-      body: t("templates.circular_published.body"),
-    };
-  }
-
-  if (rawTitle === "circular_reminder" || rawTitle === "تذكير عاجل: استجابة تعميم إداري") {
+  if (templateKey === "circular_reminder") {
     return {
       title: t("templates.circular_reminder.title"),
       body: resolveReminderBody(notification.body, t),
     };
   }
 
-  if (rawTitle === "maintenance_assigned" || rawTitle === "تم إسناد بلاغ صيانة جديد لك") {
-    return {
-      title: t("templates.maintenance_assigned.title"),
-      body: t("templates.maintenance_assigned.body"),
-    };
+  const resolved = resolveTemplateNotification(templateKey, notification.body, t);
+  if (resolved) {
+    return resolved;
   }
 
   return {

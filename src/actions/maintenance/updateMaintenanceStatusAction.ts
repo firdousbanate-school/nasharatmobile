@@ -8,6 +8,7 @@ import { isLegalTransition } from "@/lib/maintenance/isLegalTransition";
 import { parseMaintenanceTransitionData } from "@/lib/validation/parseMaintenanceTransitionData";
 import { assertCanTransitionStatus } from "@/lib/maintenance/assertCanTransitionStatus";
 import { applyMaintenanceStatusChange } from "@/lib/maintenance/applyMaintenanceStatusChange";
+import { notifyMaintenanceStatusUpdated } from "@/lib/maintenance/notifyMaintenanceStatusUpdated";
 import { fetchTicketForTransition } from "./fetchTicketForTransition";
 import { AuthenticationError } from "@/lib/errors/AuthenticationError";
 import { ForbiddenError } from "@/lib/errors/ForbiddenError";
@@ -57,6 +58,16 @@ export async function updateMaintenanceStatusAction(formData: FormData): Promise
       oldStatus: ticket.status,
       reason,
       evidencePhoto,
+    });
+
+    await notifyMaintenanceStatusUpdated({
+      requestId,
+      schoolId: profile.school_id,
+      actorId: profile.id,
+      reporterId: ticket.reporter_id,
+      assignedOperatorId: ticket.assigned_operator_id,
+      targetStatus,
+      title: ticket.title,
     });
 
     revalidatePath("/[locale]/maintenance", "page");

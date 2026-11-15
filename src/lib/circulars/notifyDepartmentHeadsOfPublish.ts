@@ -1,41 +1,61 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { dispatchModuleNotification } from "@/lib/notifications/dispatchModuleNotification";
 import { mapDatabaseError } from "@/lib/errors/mapDatabaseError";
-
-type TargetHead = { department: { head_profile_id: string | null } | null };
+import { buildCircularPublishBody } from "./buildCircularPublishBody";
+import { extractCircularTargetInfo, type CircularTargetRow } from "./extractCircularTargetInfo";
+import { getDepartmentMemberUserIds } from "./getDepartmentMemberUserIds";
 
 /**
- * Notifies the heads of the departments a circular targets (never the publisher).
- * Notification delivery is fire-and-forget; only the targets lookup can throw.
+ * Notifies the heads and active members of the departments a circular targets
+ * (never the publisher), including the circular's reference number and title when available.
  */
 export async function notifyDepartmentHeadsOfPublish(
   supabase: SupabaseClient,
-  params: { circularId: string; schoolId: string; publisherId: string },
+  params: {
+    circularId: string;
+    schoolId: string;
+    publisherId: string;
+    circularRef?: string | null;
+    circularTitle?: string | null;
+  },
 ): Promise<void> {
   const { circularId, schoolId, publisherId } = params;
 
   const { data: targets, error } = await supabase
     .from("circular_targets")
-    .select("department:departments(head_profile_id)")
+    .select(
+      "department_id, department:departments(head_profile_id), circular:circulars(ref_number, title)",
+    )
     .eq("circular_id", circularId);
 
   if (error) {
     throw mapDatabaseError(error);
   }
 
-  const headIds = ((targets ?? []) as unknown as TargetHead[])
-    .map((t) => t.department?.head_profile_id)
-    .filter((id): id is string => Boolean(id) && id !== publisherId);
+  const { headIds, departmentIds, ref, title } = extractCircularTargetInfo(
+    (targets ?? []) as unknown as CircularTargetRow[],
+  );
 
-  if (headIds.length > 0) {
-    await dispatchModuleNotification({
-      recipientUserIds: headIds,
-      schoolId,
-      type: "circular",
-      title: "circular_published",
-      body: "circular_published",
-      entityType: "circular",
-      entityId: circularId,
-    });
+  const memberIds =
+    departmentIds.length > 0
+      ? await getDepartmentMemberUserIds(supabase, schoolId, departmentIds)
+      : [];
+
+  const recipientIds = Array.from(new Set([...headIds, ...memberIds])).filter(
+    (id) => id !== publisherId,
+  );
+
+  if (recipientIds.length === 0) {
+    return;
   }
+
+  await dispatchModuleNotification({
+    recipientUserIds: recipientIds,
+    schoolId,
+    type: "circular",
+    title: "circular_published",
+    body: buildCircularPublishBody(params.circularRef ?? ref, params.circularTitle ?? title),
+    entityType: "circular",
+    entityId: circularId,
+  });
 }
