@@ -1,4 +1,4 @@
-import webpush from "web-push";
+import { setVapidDetails, sendNotification } from "web-push";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { logError } from "@/lib/logger/logError";
 import { getVapidConfig } from "./getVapidConfig";
@@ -38,7 +38,7 @@ export async function sendWebPushNotifications(
 
     if (error || !data?.length) return 0;
 
-    webpush.setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey);
+    setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey);
     const payload = JSON.stringify({
       ...resolvePushText({ title, body, entityType, entityId }),
       tag: entityId ?? title,
@@ -48,7 +48,7 @@ export async function sendWebPushNotifications(
     const results = await Promise.allSettled(
       (data as PushSubscriptionRow[]).map(async (sub) => {
         try {
-          await webpush.sendNotification(
+          await sendNotification(
             { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
             payload,
           );
