@@ -415,6 +415,7 @@ Use this proven architecture whenever implementing PDF previews in this reposito
 3. **Self-host all PDF.js static assets under `public/pdfjs/`** via a `postinstall` script (`scripts/copyPdfjsAssets.mjs`) and configure every required URL in `getDocument(...)`:
    - `GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs"`
    - `cMapUrl: "/pdfjs/cmaps/"`, `cMapPacked: true` (Arabic, RTL, and Unicode/CJK text)
+   - `iccUrl: "/pdfjs/iccs/"` (CMYK ICC color profiles in `pdfjs-dist` v6+)
    - `standardFontDataUrl: "/pdfjs/standard_fonts/"`
    - `wasmUrl: "/pdfjs/wasm/"` (mandatory in `pdfjs-dist` v6+ for JBIG2/OpenJPEG/QCMS scanned PDFs; omitting `wasmUrl` causes `JBig2 failed to initialize` and blank pages)
 4. **Configure strict CSP compatibility:** Include `worker-src 'self'` and `'wasm-unsafe-eval'` in `script-src` (in `buildContentSecurityPolicy.ts`) so the same-origin worker and WASM decoders run without `unsafe-eval` or `blob:`.

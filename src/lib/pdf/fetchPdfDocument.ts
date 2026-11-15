@@ -45,6 +45,7 @@ export async function fetchPdfDocument({
     data,
     cMapUrl: "/pdfjs/cmaps/",
     cMapPacked: true,
+    iccUrl: "/pdfjs/iccs/",
     standardFontDataUrl: "/pdfjs/standard_fonts/",
     wasmUrl: "/pdfjs/wasm/",
   });
