@@ -64,6 +64,7 @@ const eslintConfig = defineConfig([
     "test-results/**",
     "public/pdfjs/**",
     ".zwork/**",
+    ".claude/**",
   ]),
   {
     plugins: { d11: { rules: { "single-export": singleExportRule } } },
