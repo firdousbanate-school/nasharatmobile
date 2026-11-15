@@ -138,4 +138,24 @@ describe("InAppPdfViewer", () => {
       expect(screen.getByRole("alert")).toHaveTextContent("errorCorrupted");
     });
   });
+
+  it("forces LTR on page canvases so an RTL (Arabic) page does not break pdf.js text", async () => {
+    const mock = makeMockDocument(["الوحدة الأولى: الأمن السيبراني CyberSecurity", "Python برمجة"]);
+    mockFetchPdfDocument.mockResolvedValue({
+      document: mock.document,
+      loadingTask: mock.loadingTask,
+    });
+
+    const { container } = render(
+      <div dir="rtl">
+        <InAppPdfViewer url="/api/documents/1/preview" title="Arabic PDF" />
+      </div>,
+    );
+
+    await waitFor(() => {
+      const canvases = container.querySelectorAll("canvas");
+      expect(canvases.length).toBeGreaterThanOrEqual(2);
+      canvases.forEach((canvas) => expect(canvas.getAttribute("dir")).toBe("ltr"));
+    });
+  });
 });

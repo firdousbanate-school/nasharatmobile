@@ -419,7 +419,8 @@ Use this proven architecture whenever implementing PDF previews in this reposito
    - `wasmUrl: "/pdfjs/wasm/"` (mandatory in `pdfjs-dist` v6+ for JBIG2/OpenJPEG/QCMS scanned PDFs; omitting `wasmUrl` causes `JBig2 failed to initialize` and blank pages)
 4. **Configure strict CSP compatibility:** Include `worker-src 'self'` and `'wasm-unsafe-eval'` in `script-src` (in `buildContentSecurityPolicy.ts`) so the same-origin worker and WASM decoders run without `unsafe-eval` or `blob:`.
 5. **Preserve authentication and handle errors explicitly:** Fetch protected PDFs with `fetch(url, { credentials: "same-origin", signal })` and streaming progress (`ReadableStream`), classify `401` (expired session), `403` (forbidden), `404` (not found), `InvalidPDFException` (corrupted), and `network` errors with a Retry action, and release resources on unmount (`document.cleanup()` + `loadingTask.destroy()` + `AbortController`).
-6. **Prevent mobile blank canvases and wrong initial page numbers:**
+6. **Prevent mobile blank canvases, scrambled RTL Arabic text, and wrong initial page numbers:**
+   - Always set `dir="ltr"` on every PDF `<canvas>` (and `canvas.dir = "ltr"` for offscreen print canvases): HTML `<canvas>` inherits document `dir="rtl"` in Arabic UI, which causes `CanvasRenderingContext2D.fillText()` to reverse and overlap PDF.js glyph positions.
    - Serialize `page.render({ canvas })` calls per canvas via a promise queue (`renderQueueRef`) so `fitWidth` scale recalculations never collide with an in-flight render.
    - Separate the lazy-render `IntersectionObserver` (`rootMargin: "350px 0px"`, `threshold: 0.01`) from the active-page `IntersectionObserver` (`rootMargin: "0px"`, `threshold: 0.55`) so page 2 is not marked active on initial mobile load.
    - Pass `key={fileUrl}` on `<InAppPdfViewer />` when switching between documents so scroll position, `currentPage`, and canvas dimensions reset cleanly.

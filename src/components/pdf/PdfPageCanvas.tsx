@@ -88,13 +88,15 @@ export function PdfPageCanvas(props: PdfPageCanvasProps) {
   return (
     <div
       ref={containerRef}
+      dir="ltr"
       data-pdf-page={pageNumber}
       aria-label={t("pageLabel", { page: pageNumber })}
       style={{ width: dimensions.width, height: dimensions.height }}
       className="relative mx-auto shrink-0 overflow-hidden rounded-md bg-white shadow-md ring-1 ring-border"
     >
-      <canvas ref={canvasRef} className="block" />
-      <div ref={textLayerRef} className="textLayer" />
+      {/* Canvas text direction is inherited from the page; an RTL page (Arabic UI) breaks pdf.js text. */}
+      <canvas ref={canvasRef} dir="ltr" className="block" />
+      <div ref={textLayerRef} dir="ltr" className="textLayer" />
     </div>
   );
 }

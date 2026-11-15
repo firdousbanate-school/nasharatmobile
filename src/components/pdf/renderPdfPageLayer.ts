@@ -28,6 +28,7 @@ export async function renderPdfPageLayer(opts: RenderPdfPageOptions): Promise<vo
     height: Math.ceil(viewport.height),
   });
 
+  opts.canvas.dir = "ltr";
   opts.canvas.width = Math.floor(viewport.width * outputScale);
   opts.canvas.height = Math.floor(viewport.height * outputScale);
   opts.canvas.style.width = `${viewport.width}px`;

@@ -63,7 +63,7 @@ export function PdfViewerContent({
       {!isLoading && errorKind && <PdfErrorState errorKind={errorKind} onRetry={onRetry} />}
 
       {!isLoading && !errorKind && pdfDoc && (
-        <div className="flex flex-col items-center gap-4">
+        <div dir="ltr" className="flex flex-col items-center gap-4">
           {pages.map((pageNumber) => (
             <PdfPageCanvas
               key={pageNumber}

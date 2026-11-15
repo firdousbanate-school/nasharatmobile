@@ -13,6 +13,7 @@ export async function printPdfDocument(
     const page = await pdfDoc.getPage(pageNum);
     const viewport = page.getViewport({ scale: 1.5 });
     const canvas = document.createElement("canvas");
+    canvas.dir = "ltr";
     canvas.width = Math.ceil(viewport.width);
     canvas.height = Math.ceil(viewport.height);
 

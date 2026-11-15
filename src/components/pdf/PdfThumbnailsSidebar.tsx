@@ -76,7 +76,7 @@ function PdfThumbnailItem({ pdfDoc, pageNumber, isActive, onSelect }: PdfThumbna
           : "border-border bg-background hover:bg-muted"
       }`}
     >
-      <canvas ref={canvasRef} className="max-w-full rounded bg-white shadow-xs" />
+      <canvas ref={canvasRef} dir="ltr" className="max-w-full rounded bg-white shadow-xs" />
       <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
         {pageNumber}
       </span>
