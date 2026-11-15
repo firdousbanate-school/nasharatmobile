@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Geist_Mono, Tajawal } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -85,6 +86,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const underConstruction = await isUnderConstruction();
 
   return (
@@ -96,6 +98,7 @@ export default async function LocaleLayout({
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider
+          nonce={nonce}
           attribute="class"
           defaultTheme="moe"
           themes={["moe", "al-nada", "light", "dark", "emerald", "midnight"]}

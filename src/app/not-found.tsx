@@ -4,17 +4,21 @@ import Link from "next/link";
 import { FileQuestionIcon } from "lucide-react";
 import { ThemeProvider } from "@/components/theme";
 import { PORTAL_THEMES } from "@/components/theme/themeList";
+import "./globals.css";
 
 export default function RootNotFound() {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="moe"
-      themes={PORTAL_THEMES.map((t) => t.id)}
-      enableSystem={false}
-    >
-      <html lang="ar" dir="rtl" className="h-full">
-        <body className="flex min-h-full items-center justify-center bg-background p-6 text-foreground antialiased">
+    <html lang="ar" dir="rtl" className="h-full" suppressHydrationWarning>
+      <head>
+        <title>404 - Page Not Found | الصفحة غير موجودة</title>
+      </head>
+      <body className="flex min-h-full items-center justify-center bg-background p-6 text-foreground antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="moe"
+          themes={PORTAL_THEMES.map((t) => t.id)}
+          enableSystem={false}
+        >
           <div className="w-full max-w-md rounded-2xl border border-border/15 bg-card/5 p-8 text-center shadow-xl backdrop-blur-sm">
             <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-success/10 text-success">
               <FileQuestionIcon className="size-8" />
@@ -34,8 +38,8 @@ export default function RootNotFound() {
               Return Home / العودة للرئيسية
             </Link>
           </div>
-        </body>
-      </html>
-    </ThemeProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
