@@ -643,6 +643,14 @@
     "empty": "No notifications yet",
     "emptyDesc": "You are all caught up! New alerts and tasks will appear here.",
     "showMore": "Show more",
+    "browserPermission": {
+      "promptTitle": "Enable Background Browser Alerts",
+      "promptDesc": "Allow browser notifications so you receive instant alerts even when the app is in the background.",
+      "enableBtn": "Enable Alerts",
+      "blockedTitle": "Browser Notifications Are Blocked",
+      "blockedDesc": "To receive background alerts, open your browser settings (click the site settings / lock icon next to the address bar, or go to Phone Settings → Apps → Browser → Notifications) and set Notifications to Allow.",
+      "dismiss": "Dismiss"
+    },
     "filters": {
       "all": "All",
       "unread": "Unread",

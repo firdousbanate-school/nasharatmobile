@@ -3,7 +3,11 @@ import { getSessionUser } from "@/lib/auth/getSessionUser";
 import { redirect } from "@/i18n";
 import { getUserNotifications } from "@/lib/notifications/getUserNotifications";
 import { getUnreadNotificationCount } from "@/lib/notifications/getUnreadNotificationCount";
-import { NotificationHeader, NotificationList } from "@/components/notifications";
+import {
+  BrowserNotificationBanner,
+  NotificationHeader,
+  NotificationList,
+} from "@/components/notifications";
 
 export default async function NotificationsPage({
   params,
@@ -26,6 +30,7 @@ export default async function NotificationsPage({
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <NotificationHeader unreadCount={unreadCount} />
+      <BrowserNotificationBanner />
       <NotificationList notifications={notifications} />
     </div>
   );
