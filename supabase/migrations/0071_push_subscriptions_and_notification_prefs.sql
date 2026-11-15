@@ -35,13 +35,13 @@ create policy push_subscriptions_select_own on public.push_subscriptions
 drop policy if exists push_subscriptions_insert_own on public.push_subscriptions;
 create policy push_subscriptions_insert_own on public.push_subscriptions
   for insert to authenticated
-  with check (user_id = auth.uid() and school_id = public.current_school_id());
+  with check (user_id = auth.uid() and public.is_school_member(school_id));
 
 drop policy if exists push_subscriptions_update_own on public.push_subscriptions;
 create policy push_subscriptions_update_own on public.push_subscriptions
   for update to authenticated
   using (user_id = auth.uid())
-  with check (user_id = auth.uid() and school_id = public.current_school_id());
+  with check (user_id = auth.uid() and public.is_school_member(school_id));
 
 drop policy if exists push_subscriptions_delete_own on public.push_subscriptions;
 create policy push_subscriptions_delete_own on public.push_subscriptions
@@ -74,10 +74,10 @@ create policy notification_preferences_select_own on public.notification_prefere
 drop policy if exists notification_preferences_insert_own on public.notification_preferences;
 create policy notification_preferences_insert_own on public.notification_preferences
   for insert to authenticated
-  with check (user_id = auth.uid() and school_id = public.current_school_id());
+  with check (user_id = auth.uid() and public.is_school_member(school_id));
 
 drop policy if exists notification_preferences_update_own on public.notification_preferences;
 create policy notification_preferences_update_own on public.notification_preferences
   for update to authenticated
   using (user_id = auth.uid())
-  with check (user_id = auth.uid() and school_id = public.current_school_id());
+  with check (user_id = auth.uid() and public.is_school_member(school_id));
