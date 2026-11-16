@@ -16,10 +16,12 @@ export function PublicTopBar({
   school,
   events,
   isOwner = false,
+  brandAsHeading = false,
 }: {
   school: PublicSchoolProfileRow | null;
   events: CalendarEventRow[];
   isOwner?: boolean;
+  brandAsHeading?: boolean;
 }) {
   const locale = useLocale();
   const isArabic = locale === "ar";
@@ -35,7 +37,7 @@ export function PublicTopBar({
           }
         >
           <KuwaitMoeLink className={isArabic ? "shrink-0" : ""} />
-          <PublicTopBarBrand school={school} />
+          <PublicTopBarBrand school={school} asHeading={brandAsHeading} />
         </div>
 
         <div

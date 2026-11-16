@@ -27,7 +27,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div className="flex min-h-screen flex-col justify-between scroll-smooth bg-background text-foreground">
-      <PublicTopBar school={school} events={events} isOwner={isOwner} />
+      <PublicTopBar school={school} events={events} isOwner={isOwner} brandAsHeading />
       <main className="flex-1">
         <PublicHero school={school} documents={documents} />
         <PublicCircularsSection circulars={circulars} />

@@ -23,7 +23,13 @@ function resolveBrandMeta(
 }
 
 /** School logo placed directly beside the school name, with optional description below. */
-export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow | null }) {
+export function PublicTopBarBrand({
+  school,
+  asHeading = false,
+}: {
+  school: PublicSchoolProfileRow | null;
+  asHeading?: boolean;
+}) {
   const locale = useLocale();
   const t = useTranslations("home");
   const { brand, description, logoUrl } = resolveBrandMeta(
@@ -37,6 +43,7 @@ export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow |
     ? "flex min-w-0 flex-col items-end gap-1 md:items-start"
     : "flex min-w-0 flex-col items-center gap-1 md:items-start";
   const descVisibilityClass = isArabic ? "hidden md:block " : "";
+  const TitleTag = asHeading ? "h1" : "span";
 
   return (
     <div className={wrapperClass}>
@@ -51,9 +58,9 @@ export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow |
             className="size-9 shrink-0 rounded-full border border-gold/60 bg-white object-contain p-0.5 shadow-sm sm:size-10"
           />
         )}
-        <span className="truncate text-sm font-black tracking-wide text-sidebar-foreground sm:text-xl">
+        <TitleTag className="truncate text-sm font-black tracking-wide text-sidebar-foreground sm:text-xl">
           {brand}
-        </span>
+        </TitleTag>
       </div>
       {description ? (
         <p
