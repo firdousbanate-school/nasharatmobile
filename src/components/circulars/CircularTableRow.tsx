@@ -73,7 +73,11 @@ export function CircularTableRow({
         {formattedDueDate}
       </TableCell>
       <TableCell className="text-end">
-        <CircularRowActions circularId={circular.id} canManage={canManage} />
+        <CircularRowActions
+          circularId={circular.id}
+          circularLabel={circular.ref_number || circular.title}
+          canManage={canManage}
+        />
       </TableCell>
     </TableRow>
   );

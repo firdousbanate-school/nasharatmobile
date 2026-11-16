@@ -16,21 +16,26 @@ import { CircularDeleteDialog } from "./CircularDeleteDialog";
 
 export function CircularRowActions({
   circularId,
+  circularLabel,
   canManage,
 }: {
   circularId: string;
+  circularLabel?: string;
   canManage: boolean;
 }) {
   const t = useTranslations("circulars");
   const tCommon = useTranslations("common");
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const actionLabel = circularLabel
+    ? `${tCommon("actions")} — ${circularLabel}`
+    : tCommon("actions");
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8" />}>
-          <MoreHorizontalIcon className="size-4" />
-          <span className="sr-only">{tCommon("actions")}</span>
+          <MoreHorizontalIcon className="size-4" aria-hidden="true" />
+          <span className="sr-only">{actionLabel}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuGroup>

@@ -85,7 +85,7 @@ export function CircularRemindModal({
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
               placeholder={t("customMessagePlaceholder")}
-              className="w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
 

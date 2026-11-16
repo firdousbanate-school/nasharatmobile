@@ -56,8 +56,8 @@ export default async function PublicCircularsPage({
             </Link>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-gold">
-                <span className="h-0.5 w-8 rounded-full bg-gold/70" />
+              <div className="flex items-center gap-2 text-xs font-bold text-[#8a6100] sm:text-sm dark:text-gold">
+                <span className="h-0.5 w-8 rounded-full bg-[#8a6100]/70 dark:bg-gold/70" />
                 <span>{t("circularsEyebrow")}</span>
               </div>
               <h1 className="font-heading text-2xl font-black tracking-tight text-[#0a2f7a] sm:text-3xl lg:text-4xl dark:text-foreground">

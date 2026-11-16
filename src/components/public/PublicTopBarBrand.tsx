@@ -51,9 +51,9 @@ export function PublicTopBarBrand({ school }: { school: PublicSchoolProfileRow |
             className="size-9 shrink-0 rounded-full border border-gold/60 bg-white object-contain p-0.5 shadow-sm sm:size-10"
           />
         )}
-        <h1 className="truncate text-sm font-black tracking-wide text-sidebar-foreground sm:text-xl">
+        <span className="truncate text-sm font-black tracking-wide text-sidebar-foreground sm:text-xl">
           {brand}
-        </h1>
+        </span>
       </div>
       {description ? (
         <p
