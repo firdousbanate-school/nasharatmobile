@@ -40,15 +40,20 @@ export function CircularFilters({
   return (
     <div className={`${PANEL} flex flex-col gap-3 p-3 md:p-5`}>
       <div className="flex items-center gap-2 md:gap-3">
-        <div className="relative flex-1">
-          <SearchIcon className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <form onSubmit={(e) => e.preventDefault()} role="search" className="relative flex-1">
+          <SearchIcon
+            aria-hidden="true"
+            className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
           <Input
+            type="search"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={t("searchPlaceholder")}
+            aria-label={t("searchPlaceholder")}
             className="ps-9"
           />
-        </div>
+        </form>
 
         <FilterSheet activeCount={activeCount}>
           <CircularFilterControls

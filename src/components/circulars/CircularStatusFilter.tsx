@@ -30,7 +30,7 @@ export function CircularStatusFilter({
 
   return (
     <Select value={status} onValueChange={(val) => onStatusChange(val || "all")}>
-      <SelectTrigger className="w-36">
+      <SelectTrigger aria-label={t("allStatuses")} className="w-36">
         <SelectValue placeholder={t("allStatuses")}>
           {statusLabels[status] ?? t("allStatuses")}
         </SelectValue>

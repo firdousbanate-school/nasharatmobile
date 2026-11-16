@@ -29,7 +29,7 @@ export function CircularDepartmentFilter({
 
   return (
     <Select value={departmentId} onValueChange={(val) => onDepartmentChange(val || "all")}>
-      <SelectTrigger className="w-40">
+      <SelectTrigger aria-label={t("allDepartments")} className="w-40">
         <SelectValue placeholder={t("allDepartments")}>{departmentLabel}</SelectValue>
       </SelectTrigger>
       <SelectContent>

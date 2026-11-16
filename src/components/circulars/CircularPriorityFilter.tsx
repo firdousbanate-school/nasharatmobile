@@ -28,7 +28,7 @@ export function CircularPriorityFilter({
 
   return (
     <Select value={priority} onValueChange={(val) => onPriorityChange(val || "all")}>
-      <SelectTrigger className="w-32">
+      <SelectTrigger aria-label={t("allPriorities")} className="w-32">
         <SelectValue placeholder={t("allPriorities")}>
           {priorityLabels[priority] ?? t("allPriorities")}
         </SelectValue>

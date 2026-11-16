@@ -29,6 +29,7 @@ export function DashboardAchievementsWidget({
         </CardTitle>
         <Link
           href="/achievements"
+          aria-label={`${t("viewAll")} — ${t("recentAchievements")}`}
           className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >
           <span>{t("viewAll")}</span>

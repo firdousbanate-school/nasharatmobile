@@ -29,7 +29,7 @@ export function AppUserMenu({ profile }: { profile: ProfileRow | null }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-sidebar-accent focus:outline-hidden">
+      <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-sidebar-accent focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring">
         <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-semibold text-gold-foreground">
           {initials || <UserIcon className="size-4" />}
         </div>

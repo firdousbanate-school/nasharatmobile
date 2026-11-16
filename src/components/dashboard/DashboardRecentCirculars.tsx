@@ -25,6 +25,7 @@ export function DashboardRecentCirculars({ circulars }: { circulars: CircularRow
         </CardTitle>
         <Link
           href={`/${locale}/circulars`}
+          aria-label={`${t("viewAll")} — ${t("recentCirculars")}`}
           className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >
           <span>{t("viewAll")}</span>

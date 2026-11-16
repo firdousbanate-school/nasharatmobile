@@ -25,6 +25,7 @@ export function DashboardRecentMaintenance({ requests }: { requests: Maintenance
         </CardTitle>
         <Link
           href={`/${locale}/maintenance`}
+          aria-label={`${t("viewAll")} — ${t("recentMaintenance")}`}
           className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >
           <span>{t("viewAll")}</span>

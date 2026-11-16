@@ -36,7 +36,7 @@ export function ThemeToggle() {
       <DropdownMenuTrigger
         type="button"
         aria-label={t("selectTheme")}
-        className="flex size-8 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-accent focus:outline-hidden sm:size-9"
+        className="flex size-8 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-accent focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring sm:size-9"
       >
         <PaletteIcon className="size-4" />
       </DropdownMenuTrigger>

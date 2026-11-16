@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n";
 import { getSessionUser } from "@/lib/auth/getSessionUser";
 import { getCurrentProfile } from "@/lib/auth/getCurrentProfile";
@@ -22,6 +22,7 @@ import { resolveDashboardPermissions } from "@/lib/dashboard/resolveDashboardPer
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("dashboard");
 
   const user = await getSessionUser();
   if (!user) {
@@ -51,6 +52,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-4 md:gap-6">
+      <h1 className="sr-only">{t("title")}</h1>
       <DashboardStatsGrid
         circularsCount={circulars.length}
         maintenanceCount={maintenance.length}

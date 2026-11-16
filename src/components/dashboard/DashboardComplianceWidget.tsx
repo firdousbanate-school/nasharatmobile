@@ -58,7 +58,7 @@ export function DashboardComplianceWidget({ data }: { data: DashboardComplianceD
                 <select
                   value={selectedCircularId}
                   onChange={(e) => setSelectedCircularId(e.target.value)}
-                  className="h-8 w-full cursor-pointer rounded-lg border border-border bg-background ps-8 pe-3 text-xs font-medium text-foreground transition-colors outline-none focus:border-primary sm:w-auto dark:bg-input/30"
+                  className="h-8 w-full cursor-pointer rounded-lg border border-border bg-background ps-8 pe-3 text-xs font-medium text-foreground transition-colors outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring sm:w-auto dark:bg-input/30"
                   aria-label={t("selectCircular")}
                 >
                   <option value="all">{t("allCircularsSummary")}</option>
