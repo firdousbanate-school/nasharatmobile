@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
 import { InAppPdfViewer } from "./InAppPdfViewer";
 
@@ -56,6 +56,11 @@ describe("InAppPdfViewer", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  afterEach(async () => {
+    cleanup();
+    await new Promise((resolve) => setImmediate(resolve));
   });
 
   it("renders multipage PDFs, supports navigation, zoom, search, and destroys resources on unmount", async () => {
